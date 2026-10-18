@@ -40,13 +40,14 @@ video decoder was blocked. Browser regression tests cover delayed metadata,
 early/stale `loadeddata`, replacement, cancellation, timeout, URL lifetime and
 a synthetic 1280×720 MP4, without weakening CSP.
 
-For each sample the operator selects the largest face using percentage controls.
+For each sample the operator selects the largest face using the visual canvas
+editor (draw, move or resize a box). Advanced percentage controls remain available.
 The preview adds `floor(0.25 * max(face_width, face_height))` pixels on every side,
 clipped to the source boundaries. This matches the supplied padding rule but
 manual selection differs from Haar detection; **end-to-end Kaggle parity is not
 established**. There is no face detection/tracking. If a face cannot be selected,
 clear/reject that video rather than interpret missing faces as real. Every crop
-must be confirmed. Source-resolution crops are encoded as JPEG (quality .9),
+must be confirmed individually or through the explicit Apply to all frames action. Source-resolution crops are encoded as JPEG (quality .9),
 without frontend resizing or normalization. JPEG compression/browser color
 handling can change pixels compared with Kaggle's original RGB crops.
 
@@ -146,7 +147,8 @@ Before manually updating the service:
    writes or fusion changes. Only then manually promote/restart the service.
 
 Optional development browser checks (preinstalled Playwright + Chromium only):
-`PYTHONPATH=src:tests python3.12 tests/browser_video.py` and
+`PYTHONPATH=src:tests python3.12 tests/browser_video.py`,
+`PYTHONPATH=src:tests python3.12 tests/browser_selection.py`, and
 `PYTHONPATH=src:tests python3.12 tests/browser_smoke.py`.
 The video browser suite uses a clearly isolated test worker, not real model
 scores. Actual model parity and s390x resource acceptance remain manual gates.
@@ -186,3 +188,39 @@ selection and copy its report before clearing. Compare coded dimensions,
 rotation, decoded dimensions, failure category and the `dimensions-checked`
 event. A true decoded 1280×720 is within the limit; if it fails, the preserved
 report is required before attributing that failure to orientation or URL lifetime.
+
+## Visual selection and bulk preparation
+
+Choose **Video Deepfake** in the sidebar or detector overview. Upload a video,
+draw a face box on the source-frame canvas, then choose **Apply to all frames**.
+Drag inside the box to move it or drag any corner to resize it. Mouse and native
+Pointer Events (including touch) are supported. Arrow keys move by one percentage
+point; Shift+arrows resize. The advanced inputs provide an alternative for exact
+percentages and assistive workflows. Selection is user-directed, not automatic
+face detection or tracking. The default box is only a starting region.
+
+The canvas maps displayed pointer coordinates back to source percentages and
+clamps selections inside image boundaries with a minimum usable face size. The
+teal box is the selected face; the dashed rectangle and crop thumbnail show the
+existing 25% padding. Drawing affects display only: native video pixels, JPEG
+quality, crop padding, model processor, labels and aggregation are unchanged.
+
+**Confirm this frame** prepares its JPEG. **Apply to all frames** explicitly
+reuses the current region and prepares/confirms all five JPEGs sequentially,
+using existing bounded seeks. It does not submit inference or detect/track faces.
+The user can select any frame to review or adjust it afterward. Any edit clears
+only that frame's confirmation and invalidates the previous result. Frame buttons
+and the ready count make this visible; Analyze is enabled only when all five
+crops are ready. A failed bulk operation retains only the completed confirmations.
+
+Clear/replacement/page exit aborts pending preparation and releases media using
+the existing lifecycle. Touch cancellation restores the region and confirmation
+from before that gesture. A confirmed region cannot be edited during inference.
+Switching detector views preserves prepared crops and pending analysis; it does
+not send additional requests or modify the financial/fusion engine. Submitted
+server jobs still finish independently when client waiting is cancelled.
+
+See [the presentation workflow](DEMO_WORKSPACE.md) for the detector navigation,
+financial workflow and regression commands. UI tests here use synthetic media
+and a separate test worker; they do not establish actual model performance or
+physical-device browser compatibility on every laptop/phone.

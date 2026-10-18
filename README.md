@@ -15,7 +15,9 @@ starter and is not used by this application.
 
 ## Live Transaction Analyzer
 
-The HTML dashboard now opens with an interactive transaction form. Enter the five
+The HTML dashboard opens with two detector cards and an interactive transaction form.
+Use **Financial Fraud** or **Video Deepfake** in the sidebar to switch detectors;
+legacy fusion/history tools remain in the separate **Investigation lab**. Enter the five
 PaySim features or load an editable low/intermediate/high model-score example,
 then click **Analyze Transaction**. The real backend model returns its score and
 >=0.30 classification immediately; no Python commands are needed during judging.
@@ -174,9 +176,12 @@ only replay synthetic events. No simulated decision is a real financial action.
 ## Experimental VideoGuard
 
 VideoGuard samples five frames in the browser and previews manual face boxes
-with 25% padding. Same-origin asynchronous jobs run the locally installed image
+with 25% padding. Draw, move or resize the face box and choose **Apply to all
+frames** to prepare five reviewable crops without typing coordinates. Same-origin asynchronous jobs run the locally installed image
 model on LinuxONE; only an uncalibrated mean sampled-frame score is displayed.
 No video classification threshold or financial/fusion action is applied.
 No FFmpeg/OpenCV is needed. Optional inference uses the existing target
 Torch/Transformers/Pillow environment and trusted local safetensors.
 See [VideoGuard deployment and acceptance checks](docs/VIDEOGUARD.md).
+
+See [the judge-facing presentation workflow](docs/DEMO_WORKSPACE.md).

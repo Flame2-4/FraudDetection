@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>FraudGuard AI · Live Transaction Analyzer</title>
+  <title>FraudGuard AI · Detection workspace</title>
   <link rel="stylesheet" href="/dashboard.css"><script src="/dashboard.js" defer></script><script src="/media-info.js" defer></script><script src="/videoguard.js" defer></script>
 </head>
 <body>
@@ -11,22 +11,27 @@
   <a class="brand" href="#analyzer"><span class="brand-mark" aria-hidden="true">FG</span><span>FraudGuard<span class="brand-subtitle">AI · INVESTIGATION WORKSPACE</span></span></a>
   <p class="nav-label">WORKSPACE</p>
   <nav aria-label="Primary navigation">
-    <a href="#analyzer" aria-current="location"><span aria-hidden="true">01</span>Transaction analyzer</a>
-    <a href="#videoguard"><span aria-hidden="true">V</span>VideoGuard analysis</a>
+    <a href="#analyzer" aria-current="location"><span aria-hidden="true">01</span>Financial Fraud</a>
+    <a href="#videoguard"><span aria-hidden="true">02</span>Video Deepfake</a>
+    <p class="nav-label nav-secondary">INVESTIGATION LAB</p>
     <a href="#fusion"><span aria-hidden="true">02</span>Cross-channel fusion</a>
     <a href="#events-panel"><span aria-hidden="true">03</span>Event investigation</a>
     <a href="#history-panel"><span aria-hidden="true">04</span>Decision history</a>
     <a href="#review-panel"><span aria-hidden="true">05</span>Human review</a>
   </nav>
-  <div class="sidebar-note"><span class="live-dot" aria-hidden="true"></span><b>Research / demo prototype</b><p>Real financial inference.<br>Simulated enforcement.<br>Human judgment required.</p></div>
+  <div class="sidebar-note"><span class="live-dot" aria-hidden="true"></span><b>Research / demo prototype</b><p>Two trained detectors.<br>Advisory results only.<br>Simulated payments.</p></div>
   <p class="sidebar-foot">IBM Z DATATHON<br>CPU-first · Python 3.12</p>
 </aside>
 <div class="workspace">
-<header class="page-header"><div><p class="eyebrow">FINANCIAL INTELLIGENCE / LIVE ANALYSIS</p><h1>Live Transaction Analyzer</h1><p class="header-description">Explore a transaction. Inspect the signal. Keep the decision in context.</p></div><span class="connection-badge" id="analyzer-connection" role="status">Connecting to model…</span>
-<p class="banner">RESEARCH / DEMO PROTOTYPE · SIMULATED PAYMENTS · Trained financial ML · Audio/video signals remain simulated</p></header>
+<header class="page-header"><div><p class="eyebrow">IBM Z DATATHON / DETECTION WORKSPACE</p><h1 id="workspace-title">Financial Fraud</h1><p id="workspace-description" class="header-description">Enter a transaction. Get a genuine model assessment.</p></div><span class="connection-badge" id="analyzer-connection" role="status">Connecting to model…</span>
+<p class="banner">RESEARCH / DEMO PROTOTYPE · Advisory inference · Simulated payments · Human review required</p></header>
 <main>
-<section id="analyzer" class="analyzer-section" aria-labelledby="analyzer-title">
-  <div class="section-heading"><div><p class="eyebrow">TRANSACTION INTELLIGENCE</p><h2 id="analyzer-title">From transaction to insight</h2></div><span class="quiet-badge">Real model · advisory only</span></div>
+<div class="detector-overview" aria-label="Two independent detectors">
+  <a href="#analyzer" class="detector-card" data-detector="financial"><span class="detector-icon" aria-hidden="true">↗</span><span><b>Financial Fraud</b><small>Five PaySim inputs · threshold 0.30</small></span><span aria-hidden="true">→</span></a>
+  <a href="#videoguard" class="detector-card" data-detector="video"><span class="detector-icon" aria-hidden="true">▣</span><span><b>Video Deepfake</b><small>Five sampled frames · score only</small></span><span aria-hidden="true">→</span></a>
+</div>
+<section id="analyzer" data-view="financial" class="analyzer-section" aria-labelledby="analyzer-title">
+  <div class="section-heading"><div><p class="eyebrow">TRANSACTION INTELLIGENCE</p><h2 id="analyzer-title">Live Transaction Analyzer</h2></div><span class="quiet-badge">Real model · advisory only</span></div>
   <p class="section-intro">Analyze with our verified portable financial model. Enter original PaySim simulation units; amounts are not labeled or converted to USD.</p>
   <div class="analyzer-grid">
     <form id="analyzer-form" novalidate>
@@ -61,42 +66,44 @@
     </article>
   </div>
 </section>
-<div class="section-divider"><span>INVESTIGATION WORKSPACE</span><p>Explore correlated telemetry and simulated policy decisions below.</p></div>
-<section id="videoguard" class="analyzer-section" aria-labelledby="video-title">
-  <div class="section-heading"><div><p class="eyebrow">EXPERIMENTAL VIDEO INTELLIGENCE</p><h2 id="video-title">VideoGuard · sampled-frame analysis</h2></div><span class="quiet-badge">Advisory only</span></div>
-  <p>Local browser decoding · real server inference when the model is installed. No automatic face detection. Separate from simulated fusion video signals and all payment decisions.</p>
-  <p class="video-warning-banner">Experimental, uncalibrated scores, not real-world probabilities. Frame-based analysis, not a temporal video model. No validated video classification threshold or proven real-world accuracy.</p>
-  <div class="analyzer-grid">
-    <div>
-      <label for="video-file">Select a consented or synthetic video (MP4 / WebM)</label>
+<section id="videoguard" data-view="video" hidden class="analyzer-section" aria-labelledby="video-title">
+  <div class="section-heading"><div><p class="eyebrow">EXPERIMENTAL VIDEO INTELLIGENCE</p><h2 id="video-title">VideoGuard · select, review, analyze</h2></div><span class="quiet-badge">Advisory only</span></div>
+  <p class="section-intro">Select a face region once, prepare all five frames, then run the LinuxONE model. User-directed selection; no automatic face detection.</p>
+  <ol class="workflow-steps" aria-label="Video analysis steps"><li>1 · Upload</li><li>2 · Select face</li><li>3 · Apply &amp; review</li><li>4 · Analyze</li></ol>
+  <div class="analyzer-grid video-grid">
+    <div class="video-editor">
+      <label class="upload-label" for="video-file">Select a consented or synthetic video (MP4 / WebM)</label>
       <input id="video-file" type="file" accept="video/mp4,video/webm">
       <p class="muted">Maximum 50 MiB, 60 seconds, HD in either orientation (long side ≤1920, short side ≤1080). Browser codec support required. Only five cropped JPEG frames leave your browser.</p>
-      <video id="video-preview" muted playsinline preload="auto" aria-label="Selected video frame"></video>
-      <p>Select a frame, adjust its face region, then confirm every frame. Coordinates are percentages of the source frame. Select the largest face box. Preview includes 25% padding on each side, clipped to frame boundaries. No automatic detection or tracking; manual boxes can differ from Kaggle Haar detections.</p>
-      <label for="video-frame">Frame to inspect</label><select id="video-frame" disabled></select>
-      <fieldset id="video-crop" disabled><legend>Manual face region for this frame (%)</legend>
-        <div class="form-grid">
-          <label>Left <input id="crop-x" type="number" min="0" max="99" value="25"></label>
-          <label>Top <input id="crop-y" type="number" min="0" max="99" value="15"></label>
-          <label>Width <input id="crop-w" type="number" min="1" max="100" value="50"></label>
-          <label>Height <input id="crop-h" type="number" min="1" max="100" value="70"></label>
-        </div>
-        <canvas id="crop-preview" width="320" height="320" aria-label="Preview of manually selected face crop"></canvas>
-        <button id="video-confirm" type="button">Confirm crop for this frame</button>
+      <video id="video-preview" class="sr-only" muted playsinline preload="auto" aria-hidden="true"></video>
+      <div class="frame-stage"><canvas id="face-frame" width="640" height="360" tabindex="0" role="img" aria-label="Face selection editor. Drag to draw a box, drag inside to move, or drag a corner to resize. Arrow keys move; Shift and arrows resize. Advanced percentage controls are also available." aria-describedby="face-instructions"></canvas><span id="frame-placeholder">Your video frame will appear here</span></div>
+      <p id="face-instructions" class="editor-hint">Draw a box around the largest face. Drag inside to move; drag a corner to resize. Teal = your box; dashed = 25% padding. No automatic face detection.</p>
+      <div class="frame-toolbar"><label for="video-frame">Review frame <select id="video-frame" disabled></select></label><span id="video-ready" role="status" aria-live="polite">0 of 5 frames ready</span></div>
+      <div id="video-frames" class="frame-buttons" role="group" aria-label="Sampled video frames"></div>
+      <fieldset id="video-crop" disabled><legend class="sr-only">Manual face selection</legend>
+        <div class="crop-review"><div><p class="mini-heading">PADDED CROP PREVIEW</p><canvas id="crop-preview" width="320" height="320" aria-label="Face crop preview with 25 percent padding"></canvas></div><div class="crop-actions"><button id="video-confirm" type="button">Confirm this frame</button><button id="video-apply-all" type="button">Apply to all frames</button><small>Reuses this region and confirms five crops. Review any frame and adjust if the face moves.</small></div></div>
+        <details id="crop-advanced"><summary>Advanced · enter percentages</summary><div class="form-grid">
+          <label>Left % <input id="crop-x" type="number" min="0" max="99" step="any" value="25"></label>
+          <label>Top % <input id="crop-y" type="number" min="0" max="99" step="any" value="15"></label>
+          <label>Width % <input id="crop-w" type="number" min="1" max="100" step="any" value="50"></label>
+          <label>Height % <input id="crop-h" type="number" min="1" max="100" step="any" value="70"></label>
+        </div></details>
       </fieldset>
-      <button id="video-analyze" class="primary-button" type="button" disabled>Analyze sampled frames</button>
-      <button id="video-reset" type="button">Clear video / stop waiting</button>
+      <div class="video-submit"><button id="video-analyze" class="primary-button" type="button" disabled>Analyze video</button>
+      <button id="video-reset" type="button">Clear video / stop waiting</button></div>
     </div>
-    <article class="analysis-panel" aria-labelledby="video-result-title">
-      <h3 id="video-result-title">VideoGuard assessment</h3>
+    <article id="video-assessment" class="analysis-panel" aria-labelledby="video-result-title" aria-busy="false">
+      <div class="result-header"><p class="eyebrow">VIDEO MODEL ASSESSMENT</p><span class="quiet-badge">Experimental</span></div><h3 id="video-result-title">Evidence, frame by frame</h3>
       <p id="video-status" role="status" aria-live="polite">Select a video to begin.</p>
-      <p id="video-error" role="alert" hidden></p>
+      <p id="video-error" class="error-message" role="alert" hidden></p>
       <details><summary>Local video loading diagnostics</summary><p>No filename, raw media or blob URL is included or sent to the server. Copy this report when troubleshooting. MP4 headers are advisory; decoded browser dimensions determine acceptance.</p><pre id="video-diagnostics">No file selected.</pre></details>
+      <div id="video-empty" class="result-empty"><div class="signal-art" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div><p>Five sampled frames. One advisory score.</p><p class="muted">Prepare your crops, then click Analyze video to run the installed model.</p></div>
       <div id="video-result" hidden><p>Mean sampled-frame Deepfake score (0–1)</p><div id="video-score" class="model-score"></div><progress id="video-meter" max="1" value="0" aria-label="Uncalibrated mean sampled-frame deepfake score"></progress><p id="video-count"></p><p id="video-model"></p><p id="video-warning"></p></div>
-      <p class="muted">No classification threshold is applied. A low score does not establish authenticity. Missing faces, crop errors, compression and sampling may change results. Results expire after five minutes; no frames or results are added to financial history.</p>
+      <div class="result-disclaimer"><b>An experimental score, not a probability.</b><p>Frame-based analysis, not a temporal video model. No validated REAL/FAKE threshold. A low score does not prove authenticity. Results are advisory and separate from financial scoring and fusion.</p><details><summary>Limits &amp; retention</summary><p>Cropping, compression and sampling can change scores. Frames are ephemeral; results expire five minutes after completion. No financial history or payment action is created.</p></details></div>
     </article>
   </div>
 </section>
+<div id="investigation-workspace" data-view="investigation" hidden><div class="section-divider"><span>SIMULATION LAB</span><p>Legacy fusion telemetry and simulated payment decisions. Independent of both detector panels.</p></div>
 <section id="fusion" aria-labelledby="controls"><h2 id="controls">Load and replay a fictional scenario</h2>
 <div class="controls"><label>Scenario <select id="scenario"><option value="normal">Normal activity</option><option value="verify">Suspicious cross-channel activity</option><option value="freeze">Correlated high risk</option></select></label>
 <button id="replay">Load / replay deterministically</button></div>
@@ -118,6 +125,7 @@
 <section id="events-panel"><h2>Recent synthetic events</h2><div class="scroll"><table><thead><tr><th>Event time</th><th>ID / channel</th><th>User / device</th><th>Simulated data</th></tr></thead><tbody id="events"></tbody></table></div></section>
 <section id="history-panel"><h2>Simulated payment decision history</h2><div class="scroll"><table><thead><tr><th>Event time / ID</th><th>Risk</th><th>Simulated decision</th><th>Financial ML score / classification</th><th>Reason / expiry</th></tr></thead><tbody id="decisions"></tbody></table></div></section>
 <section id="review-panel"><h2>Human review</h2><p>An authorized operator in a future secured deployment would inspect the evidence timeline, linkage, missing channels and benign alternatives, verify identity through an approved independent channel, then record a reviewed disposition and rationale. This local MVP has no authentication or review mutation endpoint. Its simulated FREEZE never freezes an account or moves money.</p></section>
+</div>
 </main><footer>Local demo tool. No production security or fraud-accuracy claims. History shows the latest deterministic projections, which late events may revise.</footer>
 </div>
 </body></html>

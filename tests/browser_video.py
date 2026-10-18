@@ -28,7 +28,7 @@ def main():
                 page = browser.new_page()
                 errors = []
                 page.on('pageerror', lambda e: errors.append(str(e)))
-                page.goto(f'http://127.0.0.1:{server.server_port}/')
+                page.goto(f'http://127.0.0.1:{server.server_port}/#videoguard')
                 make_video = '''async (options) => {
                   const canvas = document.createElement('canvas'); canvas.width=options.width; canvas.height=options.height;
                   const ctx = canvas.getContext('2d'); const stream = canvas.captureStream(10);
@@ -127,7 +127,7 @@ def main():
                     }
                   });
                 })();""")
-                response = page.goto(f'http://127.0.0.1:{server.server_port}/')
+                response = page.reload()
                 csp = response.headers['content-security-policy']
                 assert "connect-src 'self';" in csp and "media-src 'self' blob:;" in csp
                 sample = {'name':'delayed.webm','mimeType':'video/webm','buffer':base64.b64decode(data)}

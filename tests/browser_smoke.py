@@ -111,6 +111,7 @@ with TemporaryDirectory() as tmp:
             expect(page.locator('.sidebar nav a[href="#events-panel"]')).to_have_attribute('aria-current','location')
             page.click('.sidebar nav a[href="#analyzer"]')
             page.locator('#analyzer-title').scroll_into_view_if_needed()
+            page.click('.sidebar nav a[href="#fusion"]')
             for name,score,decision,count in [('normal','0','APPROVE',3),('verify','45','VERIFY',3),('freeze','100','FREEZE',4)]:
                 page.select_option('#scenario',name)
                 page.click('#replay')
@@ -150,11 +151,12 @@ with TemporaryDirectory() as tmp:
             assert '0.30' in page.locator('#financial-classification').inner_text()
             assert page.locator('#decision').inner_text()=='APPROVE'
             assert 'FRAUD' in page.locator('#decisions').inner_text()
-            assert 'Audio/video signals remain simulated' in page.locator('.banner').inner_text()
+            assert 'Simulated payments' in page.locator('.banner').inner_text()
             print('PASS browser trained ML score, separate 0.30 threshold, history and unchanged fusion decision')
             page.set_viewport_size({'width':390,'height':844})
             assert page.locator('#replay').is_visible()
             assert page.locator('body').evaluate('(e) => e.scrollWidth <= window.innerWidth')
+            page.click('.sidebar nav a[href="#analyzer"]')
             page.locator('#analyzer-title').scroll_into_view_if_needed()
             assert page.locator('#analyze-submit').is_visible()
             page.screenshot(path='/tmp/fraudguard-analyzer-mobile.png',full_page=False)

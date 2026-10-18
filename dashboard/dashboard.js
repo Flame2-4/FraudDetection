@@ -44,7 +44,7 @@ async function refresh() {
     `No ML score: ${ml?.reason || "legacy record without ML assessment"}. Missing features are not a score of zero.`;
   el("financial-detail").textContent = ml?.status === "scored" ?
     `Payment ${ml.event_id} at ${ml.event_time}. Uncalibrated trained-model score; advisory only, separate from fusion risk. Model ${ml.version}, SHA-256 ${ml.sha256}.` :
-    "Uncalibrated model threshold 0.30; fusion bands remain 40/75. Audio/video detection remains simulated.";
+    "Uncalibrated model threshold 0.30; fusion bands remain 40/75. Legacy fusion audio/video inputs remain simulated; VideoGuard analysis is separate.";
   el("risk").textContent = assessment.risk_index;
   el("decision").textContent = assessment.decision;
   el("reason").textContent = assessment.decision_reason;
@@ -229,10 +229,23 @@ async function initializeAnalyzer() {
   }
 }
 function updateNavigation() {
+  const hash = location.hash || "#analyzer";
+  const view = hash === "#videoguard" ? "video" :
+    ["#fusion", "#events-panel", "#history-panel", "#review-panel"].includes(hash) ? "investigation" : "financial";
+  for (const panel of document.querySelectorAll("[data-view]")) panel.hidden = panel.dataset.view !== view;
   for (const link of document.querySelectorAll('.sidebar nav a')) {
-    if (link.hash === (location.hash || "#analyzer")) link.setAttribute("aria-current", "location");
+    if (link.hash === hash) link.setAttribute("aria-current", "location");
     else link.removeAttribute("aria-current");
   }
+  for (const card of document.querySelectorAll("[data-detector]")) {
+    if (card.dataset.detector === view) card.setAttribute("aria-current", "location");
+    else card.removeAttribute("aria-current");
+  }
+  el("workspace-title").textContent = {financial:"Financial Fraud", video:"Video Deepfake", investigation:"Investigation lab"}[view];
+  el("workspace-description").textContent = {financial:"Enter a transaction. Get a genuine model assessment.",
+    video:"Select a face. Review five frames. Inspect the model signal.",
+    investigation:"Explore fictional telemetry and simulated decisions, separate from detector analysis."}[view];
+  el("analyzer-connection").hidden = view !== "financial";
 }
 window.addEventListener("hashchange", updateNavigation);
 updateNavigation();
