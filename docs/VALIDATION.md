@@ -1,5 +1,8 @@
 # Validation evidence
 
+The original MVP results below are historical. Current financial integration
+results are recorded in the final section of this document.
+
 Executed 2026-10-18 in the current cloud environment. No LinuxONE/s390x host,
 real customer data, trained model, financial service, GPU or proprietary
 credentials were used. No application package dependencies were installed.
@@ -85,3 +88,50 @@ is verified. There is no claim of production readiness, authenticated human
 review, live financial enforcement, or validated fraud accuracy. The simulation
 clock and revisable historical projections must not be used as real payment
 controls. Actual LinuxONE verification remains a target-environment task.
+
+
+## Portable financial integration validation
+
+The uploaded JSON model and reviewed user-supplied verifier were inspected before
+execution. No joblib/pickle model was loaded; no third-party inference package was
+installed. No running application, existing database or LinuxONE service was
+upgraded or restarted. Temporary integration processes used ephemeral loopback
+ports and temporary SQLite databases.
+
+Executed in this environment (CPython 3.12.14, x86_64):
+
+```bash
+python3.12 tools/fraudguard_portable_verify.py models/financial/portable_model.json tests/fixtures/financial_reference_predictions.json
+PYTHONPATH=src python3.12 -S -m unittest discover -s tests -v
+PYTHONPATH=src python3.12 tests/browser_smoke.py
+node --check dashboard/dashboard.js
+```
+
+- Supplied verifier: 100/100 reference cases passed; maximum absolute difference
+  **1.1102230246251565e-16**, zero score mismatches at 1e-6, zero >=0.30
+  classification mismatches. The backend's original stdlib implementation also
+  matched all 100 at the stricter 1e-12 tolerance.
+- **73 automated tests passed**, including all original 53 regressions. All 100
+  references additionally passed through event validation, backend inference and
+  SQLite decision persistence. `-S` excluded site packages throughout that suite.
+- New coverage includes malformed/missing/non-finite/boolean features; JSON model
+  checksum/size and tree corruption; unknown categories; exact <= branches;
+  already-scaled leaf values; 0.30 threshold boundaries; model identity binding;
+  old-history preservation; no stale/future/cross-device score leakage; replay
+  and out-of-order convergence. High ML classifications do not silently change
+  fusion APPROVE or activate payment blocks.
+- CLI-started ephemeral test server passed health, all three legacy demos, real
+  financial ML event scoring, duplicate replay, and persisted ML score/hash/
+  threshold after an explicit **test-process** restart.
+- Chromium passed the legacy UI workflow plus actual ML score/classification,
+  separate 0.30 threshold, ML decision-history display, simulation labeling and
+  390-pixel layout. An initial narrow-layout issue from the model hash was fixed
+  with text wrapping. The passing run had no JS errors or external/CDN requests.
+- The original optional Streamlit adapter was updated to show ML output but its
+  third-party runtime was not installed or executed; HTML is the verified mode.
+
+The user reports the same portable artifact independently passed on LinuxONE
+s390x. That is not a claim that this task ran the new integrated backend there.
+Run the parity and regression gates from FINANCIAL_MODEL.md on the target before
+manually deploying. Parity demonstrates inference equivalence, not calibration,
+fraud accuracy, independent test splits or production banking safety.

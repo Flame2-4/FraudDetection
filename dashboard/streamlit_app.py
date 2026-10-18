@@ -32,7 +32,7 @@ def api(path: str, post: bool = False) -> dict:
 
 st.set_page_config(page_title="FraudGuard AI — Simulation", layout="wide")
 st.title("FraudGuard AI · SIMULATION ONLY")
-st.warning("Synthetic inputs and explicit rules. No real deepfake detection or financial actions.")
+st.warning("Simulated payment actions. Trained financial ML when features are supplied; audio/video signals remain simulated.")
 scenario = st.selectbox("Fictional scenario", ["normal", "verify", "freeze"])
 if st.button("Load / replay deterministically"):
     try:
@@ -51,7 +51,9 @@ if st.button("Refresh assessment and history"):
         query["at"] = at
     try:
         assessment = api("/api/assessment?" + urlencode(query))
-        st.metric("Risk index (not probability)", assessment["risk_index"])
+        st.subheader("Financial ML (separate from fusion; uncalibrated)")
+        st.json(assessment.get("financial_ml", {"status": "unavailable"}))
+        st.metric("Fusion risk index (not probability)", assessment["risk_index"])
         st.subheader("Simulated decision: " + assessment["decision"])
         st.write(assessment["decision_reason"])
         st.subheader("Active simulated cooling-off block")

@@ -8,6 +8,7 @@ import sqlite3
 from typing import Any
 
 from .models import CapacityError, ConflictError, Event, ValidationError, canonical, identifier, iso, timestamp
+from .financial import FinancialModel
 from .policy import Policy, score_events
 from .storage import Store
 
@@ -22,7 +23,8 @@ class Engine:
 
     def __init__(self, path: str | Path, policy: Policy | None = None):
         self.policy = policy or Policy()
-        self.store = Store(path, self.policy)
+        self.financial_model = FinancialModel()
+        self.store = Store(path, self.policy, self.financial_model.identity)
 
     def submit(self, values: list[dict]) -> dict[str, Any]:
         if not isinstance(values, list) or not 1 <= len(values) <= 100:
@@ -65,8 +67,17 @@ class Engine:
     def _assessment(self, events: list[Event], tenant: str, user: str, device: str,
                     at: str, block: dict | None) -> dict:
         score = score_events(events, self.policy)
+        payments = [event for event in events if event.event_type == "payment"]
+        if payments:
+            latest = payments[-1]
+            features = latest.data.get("financial_features")
+            financial = (self.financial_model.assess(features) if features is not None else
+                         self.financial_model.unavailable("financial_features_not_supplied"))
+            financial.update(event_id=latest.event_id, event_time=latest.timestamp)
+        else:
+            financial = self.financial_model.unavailable("no_payment_in_window")
         active = block is not None and block["start"] <= at < block["expiry"]
-        return {**score, "tenant_id": tenant, "user_id": user, "device_id": device,
+        return {**score, "financial_ml": financial, "tenant_id": tenant, "user_id": user, "device_id": device,
                 "as_of": at, "clock_mode": "event_time", "simulated": True,
                 "policy": self.policy.to_dict(), "window_start": iso(timestamp(at) - timedelta(
                     seconds=self.policy.window_seconds)), "window_end": at,
@@ -74,7 +85,7 @@ class Engine:
                 "decision": "FREEZE" if active else score["base_decision"],
                 "block_enforced": active, "active_block": block if active else None,
                 "decision_reason": "active simulated cooling-off block" if active else "risk thresholds",
-                "limitations": "Synthetic rules; missing channels are unknown, not evidence of safety"}
+                "limitations": "Simulated payment policy; financial ML is advisory and uncalibrated; audio/video inputs are simulated"}
 
     def _rebuild(self, db: sqlite3.Connection, tenant: str, user: str) -> None:
         rows = db.execute("SELECT payload FROM events WHERE tenant_id=? AND user_id=? "

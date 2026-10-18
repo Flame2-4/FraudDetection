@@ -7,7 +7,7 @@
 </head>
 <body>
 <header><p class="eyebrow">FraudGuard AI</p><h1>Cross-channel risk console</h1>
-<p class="banner">SIMULATION ONLY · Synthetic telemetry · Explicit rules, no trained ML or real deepfake detection</p></header>
+<p class="banner">SIMULATED PAYMENTS · Trained financial ML · Audio/video signals remain simulated</p></header>
 <main>
 <section aria-labelledby="controls"><h2 id="controls">Load and replay a fictional scenario</h2>
 <div class="controls"><label>Scenario <select id="scenario"><option value="normal">Normal activity</option><option value="verify">Suspicious cross-channel activity</option><option value="freeze">Correlated high risk</option></select></label>
@@ -21,10 +21,13 @@
 <section class="metrics" aria-label="Current event-time assessment"><article><h2>Risk index</h2><strong id="risk">—</strong><p>Heuristic 0–100, not probability</p></article>
 <article><h2>Simulated decision</h2><strong id="decision">—</strong><p id="reason"></p></article>
 <article><h2>Simulated cooling-off</h2><strong id="block">—</strong><p id="expiry"></p></article></section>
+<section aria-labelledby="financial-heading"><h2 id="financial-heading">Financial ML assessment</h2>
+<strong id="financial-score">Unavailable</strong><p id="financial-classification">Supply all five trained payment features to score a transaction.</p>
+<p id="financial-detail">Uncalibrated model score, separate from the 0–100 fusion risk index. Model classification does not freeze an account.</p></section>
 <section><h2>Correlation and coverage</h2><pre id="correlation">No events loaded.</pre></section>
 <section><h2>Risk factors and explanations</h2><div class="scroll"><table><thead><tr><th>Rule / group</th><th>Weight</th><th>Strength</th><th>Awarded points</th><th>Evidence / explanation</th></tr></thead><tbody id="factors"></tbody></table></div><p id="interaction"></p></section>
 <section><h2>Recent synthetic events</h2><div class="scroll"><table><thead><tr><th>Event time</th><th>ID / channel</th><th>User / device</th><th>Simulated data</th></tr></thead><tbody id="events"></tbody></table></div></section>
-<section><h2>Simulated payment decision history</h2><div class="scroll"><table><thead><tr><th>Event time / ID</th><th>Risk</th><th>Simulated decision</th><th>Reason / expiry</th></tr></thead><tbody id="decisions"></tbody></table></div></section>
+<section><h2>Simulated payment decision history</h2><div class="scroll"><table><thead><tr><th>Event time / ID</th><th>Risk</th><th>Simulated decision</th><th>Financial ML score / classification</th><th>Reason / expiry</th></tr></thead><tbody id="decisions"></tbody></table></div></section>
 <section><h2>Human review</h2><p>An authorized operator in a future secured deployment would inspect the evidence timeline, linkage, missing channels and benign alternatives, verify identity through an approved independent channel, then record a reviewed disposition and rationale. This local MVP has no authentication or review mutation endpoint. Its simulated FREEZE never freezes an account or moves money.</p></section>
 </main><footer>Local demo tool. No production security or fraud-accuracy claims. History shows the latest deterministic projections, which late events may revise.</footer>
 </body></html>

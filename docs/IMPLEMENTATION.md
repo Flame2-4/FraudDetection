@@ -4,14 +4,16 @@ This is the follow-up implementation authorized after Phase 1. `AGENTS.md`,
 `REFERENCES.md` and `ARCHITECTURE.md` remain byte-for-byte unchanged. Their Phase 1
 scope restrictions were historical; the new user request authorizes this phase.
 Implementation followed engine → mock scenarios → scoring/intervention → dashboard
-→ local testing. Actual LinuxONE deployment remains unverified.
+→ local testing. Actual LinuxONE deployment remains unverified. A subsequent authorized integration
+adds portable financial ML as documented in [FINANCIAL_MODEL.md](FINANCIAL_MODEL.md);
+Phase 1 research files remain unchanged.
 
 ## Module boundaries
 
 - `src/fraudguard/models.py`: strict versioned synthetic event schema, safe
   fictional identifiers, canonical timezone-aware timestamps and strict JSON.
-- `policy.py`: transparent rules, quality scaling, group caps, pair interactions,
-  threshold mapping and persisted configuration. No trained model.
+- `policy.py`: transparent fusion rules, quality scaling, group caps, pair interactions,
+  threshold mapping and persisted configuration; financial ML is separate.
 - `storage.py`: SQLite schema and transaction-scoped connections.
 - `engine.py`: deduplication, deterministic correlation, persistence, historical
   recomputation, snapshots and user-scoped simulated cooling blocks.
@@ -132,3 +134,14 @@ remove only stopped, disposable synthetic databases according to local policy.
 
 Streamlit remains optional because its s390x dependency chain is unverified; the
 offline HTML console fulfills the portable dashboard path without that chain.
+
+
+## Financial model extension
+
+`financial.py` now performs trained financial inference from a pinned JSON model
+using only the standard library. Payment schemas optionally accept five explicit
+features; assessment and decision payloads persist the actual score, >=0.30
+classification and model identity. This is advisory alongside the preserved
+fusion rules, not a new payment freeze rule. Audio/video detectors remain
+simulated. See [financial model integration](FINANCIAL_MODEL.md) for validation,
+backward-compatible database binding and manual deployment instructions.

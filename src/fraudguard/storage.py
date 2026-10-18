@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS interventions (
 class Store:
     """Open a fresh connection per operation; serialize mutations with SQLite."""
 
-    def __init__(self, path: str | Path, policy: Policy):
+    def __init__(self, path: str | Path, policy: Policy, financial_model: dict):
         self.path = str(path)
         if self.path == ":memory:":
             raise ValueError("use a file database (temporary files work in tests)")
@@ -44,6 +44,12 @@ class Store:
             if row and row[0] != expected:
                 raise ConflictError("database policy differs; use the original options or a fresh database")
             db.execute("INSERT OR IGNORE INTO settings(name,value) VALUES('policy',?)", (expected,))
+            # Additive binding: do not rewrite existing event/decision history on startup.
+            model_identity = canonical(financial_model)
+            row = db.execute("SELECT value FROM settings WHERE name='financial_model'").fetchone()
+            if row and row[0] != model_identity:
+                raise ConflictError("database financial model differs; explicit migration or a fresh database is required")
+            db.execute("INSERT OR IGNORE INTO settings(name,value) VALUES('financial_model',?)", (model_identity,))
 
     @contextmanager
     def connect(self) -> Iterator[sqlite3.Connection]:

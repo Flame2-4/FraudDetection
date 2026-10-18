@@ -111,6 +111,12 @@ class Event:
             "audio": {"spoof_risk": float, "quality": float, "observation_id": str},
             "video": {"manipulation_risk": float, "quality": float, "observation_id": str},
         }
+        # Lazy import avoids a circular dependency with shared validation errors.
+        financial_features = None
+        if value["event_type"] == "payment" and isinstance(data, dict) and "financial_features" in data:
+            from .financial import validate_features
+            financial_features = validate_features(data["financial_features"])
+            data = {key: item for key, item in data.items() if key != "financial_features"}
         schema = schemas[value["event_type"]]
         if not isinstance(data, dict) or set(data) != set(schema):
             raise ValidationError(f"data fields for {value['event_type']} must be {sorted(schema)}")
@@ -129,6 +135,9 @@ class Event:
             raise ValidationError("failed_logins must be between 0 and 10000")
         if "observation_id" in data:
             identifier(data["observation_id"], "observation_id")
+        data = dict(data)
+        if financial_features is not None:
+            data["financial_features"] = financial_features
         return cls(**clean, event_type=value["event_type"], timestamp=iso(timestamp(value["timestamp"])),
                    data=dict(data), session_id=identifier(value["session_id"], "session_id")
                    if "session_id" in value else None)

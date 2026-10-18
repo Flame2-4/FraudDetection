@@ -139,3 +139,29 @@ class APITests(unittest.TestCase):
         query="tenant_id=demo&user_id=fictional-freeze&device_id=device-freeze"
         self.assertEqual(json.loads(self.call("/api/assessment?"+query+"&at=2026-01-01T13:01:59Z")[1])["decision"],"FREEZE")
         self.assertEqual(json.loads(self.call("/api/assessment?"+query+"&at=2026-01-01T13:02:00Z")[1])["decision"],"APPROVE")
+
+    def test_financial_ml_submission_history_and_health(self):
+        references=json.loads((Path(__file__).parent/"fixtures/financial_reference_predictions.json").read_text())
+        reference=next(row for row in references if row["expected_score"]>=.3)
+        value=event("ml-api",tenant="ml-api",financial_features=reference["features"])
+        status,raw,_=self.call("/api/events","POST",value)
+        self.assertEqual(status,201)
+        assessment=json.loads(raw)["assessments"][0]
+        ml=assessment["financial_ml"]
+        self.assertAlmostEqual(ml["score"],reference["expected_score"],places=12)
+        self.assertTrue(ml["is_fraud"])
+        self.assertEqual(ml["threshold"],.3)
+        self.assertEqual(assessment["decision"],"APPROVE")
+        self.assertTrue(assessment["simulated"])
+        for path in ("/api/assessment?tenant_id=ml-api&user_id=u&device_id=d",
+                     "/api/decisions?tenant_id=ml-api"):
+            status,raw,_=self.call(path)
+            self.assertEqual(status,200)
+            body=json.loads(raw)
+            result=body["items"][0] if "items" in body else body
+            self.assertEqual(result["financial_ml"],ml)
+        status,raw,_=self.call("/api/health")
+        self.assertEqual(json.loads(raw)["financial_model"]["threshold"],.3)
+        value["event_id"]="invalid-ml"
+        value["data"]["financial_features"].pop("oldbalanceDest")
+        self.assertEqual(self.call("/api/events","POST",value)[0],400)

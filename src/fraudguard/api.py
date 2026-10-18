@@ -104,7 +104,9 @@ class Handler(BaseHTTPRequestHandler):
                 raise ValidationError("health does not accept query parameters")
             with self.engine.store.connect() as db:
                 db.execute("SELECT 1 FROM settings LIMIT 1").fetchone()
-            self._respond(200, {"status": "ok", "simulated": True, "model": "explicit rules; no ML",
+            self._respond(200, {"status": "ok", "simulated": True, "model": "explicit fusion rules + portable financial ML",
+                                "financial_model": self.engine.financial_model.identity,
+                                "audio_video": "simulated inputs; no real detectors",
                                 "policy": self.engine.policy.to_dict()})
         elif path == "/api/scenarios":
             if query:

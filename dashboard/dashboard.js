@@ -27,6 +27,14 @@ async function refresh() {
   const [assessment, events, decisions] = await Promise.all([
     request(`/api/assessment?${query}`), request(`/api/events?${history}`), request(`/api/decisions?${history}`)
   ]);
+  const ml = assessment.financial_ml;
+  el("financial-score").textContent = ml?.status === "scored" ? String(ml.score) : "Unavailable";
+  el("financial-classification").textContent = ml?.status === "scored" ?
+    `${ml.classification}: score >= ${ml.threshold.toFixed(2)} = ${ml.is_fraud}. Unknown category: ${!ml.category_known}.` :
+    `No ML score: ${ml?.reason || "legacy record without ML assessment"}. Missing features are not a score of zero.`;
+  el("financial-detail").textContent = ml?.status === "scored" ?
+    `Payment ${ml.event_id} at ${ml.event_time}. Uncalibrated trained-model score; advisory only, separate from fusion risk. Model ${ml.version}, SHA-256 ${ml.sha256}.` :
+    "Uncalibrated model threshold 0.30; fusion bands remain 40/75. Audio/video detection remains simulated.";
   el("risk").textContent = assessment.risk_index;
   el("decision").textContent = assessment.decision;
   el("reason").textContent = assessment.decision_reason;
@@ -44,7 +52,8 @@ async function refresh() {
   rows("events", events.items.map(e => [e.timestamp, `${e.event_id} / ${e.event_type}`,
     `${e.user_id} / ${e.device_id} / session: ${e.session_id || "not supplied"}`, JSON.stringify(e.data)]));
   rows("decisions", decisions.items.map(d => [`${d.as_of} / ${d.event_id}`, d.risk_index,
-    d.decision, `${d.decision_reason}; expiry ${d.active_block?.expiry || "—"}`]));
+    d.decision, d.financial_ml?.status === "scored" ? `${d.financial_ml.score} / ${d.financial_ml.classification} (>= ${d.financial_ml.threshold})` : "ML unavailable",
+    `${d.decision_reason}; expiry ${d.active_block?.expiry || "—"}`]));
   el("status").textContent = `Loaded ${events.items.length} recent events and ${decisions.items.length} payment decisions (up to 100 each). Simulation only.`;
 }
 async function guarded(action) {

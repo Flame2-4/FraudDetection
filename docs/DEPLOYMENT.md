@@ -127,3 +127,14 @@ Human review of a real flagged case would require an authorized role, evidence
 inspection, independent identity verification, documented reason and disposition,
 appeal/correction and oversight. Those controls need a separately secured future
 implementation. The current FREEZE only records a simulation in SQLite.
+
+
+## Upgrading to portable financial ML
+
+The backend now bundles a pinned JSON model evaluated with stdlib only. Include
+`models/financial/portable_model.json` when copying/deploying the checkout. No
+scientific-Python or ONNX package installation is needed. Follow the backup,
+100-reference parity gate, full integration regression and **manual** restart
+sequence in [FINANCIAL_MODEL.md](FINANCIAL_MODEL.md). The user's original s390x
+model verification does not establish that this integrated backend has already
+been deployed or tested on your host.

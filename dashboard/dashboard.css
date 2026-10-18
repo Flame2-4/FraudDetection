@@ -131,3 +131,6 @@ th {
     max-width:100%;
   }
 }
+#financial-score, #financial-detail {
+  overflow-wrap: anywhere;
+}

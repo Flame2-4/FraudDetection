@@ -2,14 +2,29 @@
 
 An original, local cross-channel fraud **simulation** using Python's standard
 library, transparent rules and SQLite. It correlates fictional payments, device
-telemetry, calls, and simulated audio/video suspicion. There is no trained ML,
-real deepfake detector, bank integration, money movement or real account freeze.
-The heuristic risk index is not a fraud probability.
+telemetry, calls, and simulated audio/video suspicion. It now includes a trained
+portable financial model when five explicit features are supplied. Audio/video inputs remain simulated: there is no real deepfake
+detector, bank integration, money movement or real account freeze.
+The heuristic fusion risk index and uncalibrated financial ML score are separate.
 
 Target: Python **3.12**, CPU-only LinuxONE **s390x**. Current validation was on
 Python 3.12.14 / x86_64 Linux, not LinuxONE. Core/API/offline dashboard need no
 third-party Python packages. The original `src/fraud_detector.py` remains a legacy
 starter and is not used by this application.
+
+## Financial ML integration
+
+Payment events can optionally include `data.financial_features` with `step`,
+`type`, `amount`, `oldbalanceOrg`, and `oldbalanceDest`. Standard-library inference
+returns `financial_ml.score`, `is_fraud` (score >= **0.30**), classification and
+model provenance in API assessments, stored decisions and the dashboard. Missing
+features mean ML unavailable, not zero. Fusion thresholds **40/75** and all cooling
+behavior are unchanged; ML is advisory and does not silently create a new freeze
+rule. Existing demos stay reproducible and explicitly simulated.
+
+See [the input/API example, verification and manual LinuxONE upgrade](docs/FINANCIAL_MODEL.md).
+The supplied model's s390x parity is user-reported; this integration was tested
+locally, not deployed. Do not install joblib, sklearn or ONNX Runtime to serve it.
 
 ## Local development and startup
 
@@ -128,7 +143,7 @@ PYTHONPATH=src python3.12 -m unittest discover -s tests -v
 ```
 
 Tests use temporary databases, deterministic synthetic data and only loopback
-HTTP for API integration. They require no external network, ML weights, GPU,
+HTTP for API integration. They require no external network, external model downloads, GPU,
 financial service or credentials. Tests cover schema/timestamps, boundaries,
 linkage/window isolation, nonlinear explanations, permutations, duplicates,
 persistence, cooling, API failures, concurrency, scenarios and replay.

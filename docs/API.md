@@ -141,3 +141,15 @@ parameters are rejected. SQLite contention may return 503; retry the same IDs.
 Example validation response: `{"error":"only simulated=true events are accepted","simulated":true}`.
 No sensitive payloads are intentionally logged. Standard-library HTTP serving
 is for local development, not a hardened internet-facing service.
+
+
+## Portable financial ML extension
+
+Payment data accepts an additional optional `financial_features` object with all
+five trained features. No other event types accept it. Existing required fields
+and endpoints stay the same. Assessments/decisions additionally expose
+`financial_ml`: actual uncalibrated score, >=0.30 classification, status, event
+provenance and pinned model identity. Fusion bands remain 40/75; ML is advisory.
+Missing features return null score/classification, not zero. Legacy history rows
+may omit this new key. See [the complete contract and executable curl example](FINANCIAL_MODEL.md).
+Health now identifies portable financial ML and explicitly simulated audio/video.

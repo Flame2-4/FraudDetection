@@ -1,0 +1,1102 @@
+[
+  {
+    "features": {
+      "step": 659.0,
+      "type": "PAYMENT",
+      "amount": 23162.1,
+      "oldbalanceOrg": 0.0,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.0004521563016246734,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 637.0,
+      "type": "CASH_IN",
+      "amount": 74443.77,
+      "oldbalanceOrg": 929934.05,
+      "oldbalanceDest": 746769.67
+    },
+    "expected_score": 0.0004251490540444482,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 688.0,
+      "type": "CASH_IN",
+      "amount": 84018.05,
+      "oldbalanceOrg": 4314399.11,
+      "oldbalanceDest": 1586100.35
+    },
+    "expected_score": 0.0004251490540444482,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 729.0,
+      "type": "TRANSFER",
+      "amount": 1102951.39,
+      "oldbalanceOrg": 1102951.39,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.6147014207916706,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 724.0,
+      "type": "CASH_OUT",
+      "amount": 200482.72,
+      "oldbalanceOrg": 200482.72,
+      "oldbalanceDest": 254271.49
+    },
+    "expected_score": 0.1649311407437175,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 637.0,
+      "type": "CASH_OUT",
+      "amount": 3845765.36,
+      "oldbalanceOrg": 3845765.36,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.4651912660445522,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 670.0,
+      "type": "CASH_OUT",
+      "amount": 1001446.44,
+      "oldbalanceOrg": 1001446.44,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 1.0,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 686.0,
+      "type": "CASH_OUT",
+      "amount": 125718.83,
+      "oldbalanceOrg": 42604.0,
+      "oldbalanceDest": 141800.69
+    },
+    "expected_score": 0.000502011554427385,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 736.0,
+      "type": "CASH_OUT",
+      "amount": 10000000.0,
+      "oldbalanceOrg": 10000000.0,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.4651912660445522,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 697.0,
+      "type": "CASH_OUT",
+      "amount": 378623.9,
+      "oldbalanceOrg": 378623.9,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.1649311407437175,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 680.0,
+      "type": "TRANSFER",
+      "amount": 272716.64,
+      "oldbalanceOrg": 272716.64,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 8.863945316803736e-09,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 720.0,
+      "type": "CASH_OUT",
+      "amount": 79039.81,
+      "oldbalanceOrg": 79039.81,
+      "oldbalanceDest": 11270532.7
+    },
+    "expected_score": 0.009010227853567162,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 681.0,
+      "type": "PAYMENT",
+      "amount": 26030.32,
+      "oldbalanceOrg": 0.0,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.0004521563016246734,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 703.0,
+      "type": "TRANSFER",
+      "amount": 337287.72,
+      "oldbalanceOrg": 337287.72,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.39076073398745687,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 714.0,
+      "type": "TRANSFER",
+      "amount": 587438.32,
+      "oldbalanceOrg": 292.0,
+      "oldbalanceDest": 1926845.93
+    },
+    "expected_score": 0.0003858359024334851,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 731.0,
+      "type": "CASH_OUT",
+      "amount": 302227.56,
+      "oldbalanceOrg": 302227.56,
+      "oldbalanceDest": 1125769.87
+    },
+    "expected_score": 0.1649311407437175,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 644.0,
+      "type": "PAYMENT",
+      "amount": 4952.26,
+      "oldbalanceOrg": 23258.0,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.0004521563016246734,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 681.0,
+      "type": "CASH_IN",
+      "amount": 40096.73,
+      "oldbalanceOrg": 34223.0,
+      "oldbalanceDest": 142413.21
+    },
+    "expected_score": 0.0004521563016246734,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 691.0,
+      "type": "CASH_OUT",
+      "amount": 116636.06,
+      "oldbalanceOrg": 116636.06,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.1649311407437175,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 638.0,
+      "type": "TRANSFER",
+      "amount": 43996.54,
+      "oldbalanceOrg": 43996.54,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.5513712750260215,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 659.0,
+      "type": "TRANSFER",
+      "amount": 818015.67,
+      "oldbalanceOrg": 0.0,
+      "oldbalanceDest": 1621416.48
+    },
+    "expected_score": 0.00040817729455358147,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 649.0,
+      "type": "CASH_OUT",
+      "amount": 68712.62,
+      "oldbalanceOrg": 0.0,
+      "oldbalanceDest": 1055631.34
+    },
+    "expected_score": 0.0005133028639321248,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 638.0,
+      "type": "TRANSFER",
+      "amount": 5101855.95,
+      "oldbalanceOrg": 5101855.95,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.9999999999999876,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 722.0,
+      "type": "TRANSFER",
+      "amount": 1158396.74,
+      "oldbalanceOrg": 1158396.74,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.6147014207916706,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 691.0,
+      "type": "CASH_OUT",
+      "amount": 363180.09,
+      "oldbalanceOrg": 87220.0,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.0012833766600290532,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 690.0,
+      "type": "TRANSFER",
+      "amount": 166891.51,
+      "oldbalanceOrg": 166891.51,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.8243971952524051,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 689.0,
+      "type": "TRANSFER",
+      "amount": 228416.57,
+      "oldbalanceOrg": 228416.57,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 2.644229840257783e-35,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 686.0,
+      "type": "CASH_IN",
+      "amount": 349638.24,
+      "oldbalanceOrg": 30955.0,
+      "oldbalanceDest": 14490.71
+    },
+    "expected_score": 0.0004521563016246734,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 648.0,
+      "type": "TRANSFER",
+      "amount": 27584.17,
+      "oldbalanceOrg": 27584.17,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.5513712750260215,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 691.0,
+      "type": "CASH_IN",
+      "amount": 229942.55,
+      "oldbalanceOrg": 8285863.75,
+      "oldbalanceDest": 802451.17
+    },
+    "expected_score": 0.0004251490540444482,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 723.0,
+      "type": "TRANSFER",
+      "amount": 457359.64,
+      "oldbalanceOrg": 457359.64,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.39076073398745687,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 712.0,
+      "type": "CASH_OUT",
+      "amount": 367207.98,
+      "oldbalanceOrg": 367207.98,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.1649311407437175,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 656.0,
+      "type": "PAYMENT",
+      "amount": 3240.22,
+      "oldbalanceOrg": 30118.0,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.0004521563016246734,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 655.0,
+      "type": "TRANSFER",
+      "amount": 253648.68,
+      "oldbalanceOrg": 253648.68,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 2.644229840257783e-35,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 684.0,
+      "type": "CASH_OUT",
+      "amount": 66136.84,
+      "oldbalanceOrg": 0.0,
+      "oldbalanceDest": 380816.68
+    },
+    "expected_score": 0.0005133028639321248,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 741.0,
+      "type": "TRANSFER",
+      "amount": 62297.18,
+      "oldbalanceOrg": 62297.18,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.8243971952524051,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 709.0,
+      "type": "CASH_OUT",
+      "amount": 320939.71,
+      "oldbalanceOrg": 6721.0,
+      "oldbalanceDest": 498870.72
+    },
+    "expected_score": 0.00049012719664745,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 705.0,
+      "type": "CASH_IN",
+      "amount": 107786.13,
+      "oldbalanceOrg": 268018.93,
+      "oldbalanceDest": 275832.22
+    },
+    "expected_score": 0.0004280506223331833,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 679.0,
+      "type": "TRANSFER",
+      "amount": 3150438.28,
+      "oldbalanceOrg": 3150438.28,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.9999999999999876,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 726.0,
+      "type": "TRANSFER",
+      "amount": 1539474.57,
+      "oldbalanceOrg": 1539474.57,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.6147014207916706,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 649.0,
+      "type": "CASH_OUT",
+      "amount": 963966.56,
+      "oldbalanceOrg": 963966.56,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 1.0,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 717.0,
+      "type": "CASH_OUT",
+      "amount": 2624422.62,
+      "oldbalanceOrg": 2624422.62,
+      "oldbalanceDest": 1204416.83
+    },
+    "expected_score": 0.9999999999999984,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 697.0,
+      "type": "TRANSFER",
+      "amount": 106850.22,
+      "oldbalanceOrg": 106850.22,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.8243971952524051,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 688.0,
+      "type": "CASH_IN",
+      "amount": 176406.4,
+      "oldbalanceOrg": 953.0,
+      "oldbalanceDest": 2871563.54
+    },
+    "expected_score": 0.0004521563016246734,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 715.0,
+      "type": "TRANSFER",
+      "amount": 1390048.67,
+      "oldbalanceOrg": 1390048.67,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.6147014207916706,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 645.0,
+      "type": "CASH_OUT",
+      "amount": 1576874.04,
+      "oldbalanceOrg": 1576874.04,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 1.0,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 688.0,
+      "type": "CASH_OUT",
+      "amount": 186065.16,
+      "oldbalanceOrg": 0.0,
+      "oldbalanceDest": 9716741.25
+    },
+    "expected_score": 0.00046624321602405084,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 738.0,
+      "type": "CASH_OUT",
+      "amount": 106584.32,
+      "oldbalanceOrg": 106584.32,
+      "oldbalanceDest": 5524872.71
+    },
+    "expected_score": 0.009010227853567162,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 637.0,
+      "type": "CASH_IN",
+      "amount": 145746.61,
+      "oldbalanceOrg": 1222108.05,
+      "oldbalanceDest": 4529411.34
+    },
+    "expected_score": 0.0004251490540444482,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 684.0,
+      "type": "TRANSFER",
+      "amount": 459.38,
+      "oldbalanceOrg": 459.38,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.004336467964327477,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 720.0,
+      "type": "CASH_OUT",
+      "amount": 71439.81,
+      "oldbalanceOrg": 71439.81,
+      "oldbalanceDest": 106159.59
+    },
+    "expected_score": 0.009010227853567162,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 714.0,
+      "type": "CASH_OUT",
+      "amount": 8838.19,
+      "oldbalanceOrg": 8838.19,
+      "oldbalanceDest": 15334.27
+    },
+    "expected_score": 0.00982021863551578,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 671.0,
+      "type": "TRANSFER",
+      "amount": 36956.27,
+      "oldbalanceOrg": 36956.27,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.5513712750260215,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 741.0,
+      "type": "TRANSFER",
+      "amount": 10000000.0,
+      "oldbalanceOrg": 25674547.89,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.9999999999999876,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 695.0,
+      "type": "CASH_OUT",
+      "amount": 286835.21,
+      "oldbalanceOrg": 286835.21,
+      "oldbalanceDest": 1678767.02
+    },
+    "expected_score": 0.1649311407437175,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 694.0,
+      "type": "CASH_IN",
+      "amount": 145829.86,
+      "oldbalanceOrg": 40136.0,
+      "oldbalanceDest": 1088665.39
+    },
+    "expected_score": 0.0004521563016246734,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 694.0,
+      "type": "TRANSFER",
+      "amount": 10000000.0,
+      "oldbalanceOrg": 18980853.88,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.9999999999999876,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 681.0,
+      "type": "PAYMENT",
+      "amount": 6240.12,
+      "oldbalanceOrg": 0.0,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.0004521563016246734,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 657.0,
+      "type": "TRANSFER",
+      "amount": 1619313.55,
+      "oldbalanceOrg": 1619313.55,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.6147014207916706,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 692.0,
+      "type": "PAYMENT",
+      "amount": 12582.11,
+      "oldbalanceOrg": 0.0,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.0004521563016246734,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 644.0,
+      "type": "CASH_IN",
+      "amount": 51221.83,
+      "oldbalanceOrg": 5029.0,
+      "oldbalanceDest": 8797016.72
+    },
+    "expected_score": 0.0004521563016246734,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 710.0,
+      "type": "PAYMENT",
+      "amount": 19697.34,
+      "oldbalanceOrg": 453.0,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.0004521563016246734,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 661.0,
+      "type": "CASH_OUT",
+      "amount": 178130.4,
+      "oldbalanceOrg": 0.0,
+      "oldbalanceDest": 263128.97
+    },
+    "expected_score": 0.00046624321602405084,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 733.0,
+      "type": "CASH_OUT",
+      "amount": 1548376.44,
+      "oldbalanceOrg": 1548376.44,
+      "oldbalanceDest": 2317541.56
+    },
+    "expected_score": 0.9999994304743358,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 670.0,
+      "type": "PAYMENT",
+      "amount": 616.02,
+      "oldbalanceOrg": 0.0,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.0004521563016246734,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 715.0,
+      "type": "CASH_IN",
+      "amount": 106415.49,
+      "oldbalanceOrg": 25662.0,
+      "oldbalanceDest": 130004.14
+    },
+    "expected_score": 0.0004521563016246734,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 688.0,
+      "type": "TRANSFER",
+      "amount": 7442005.19,
+      "oldbalanceOrg": 7442005.19,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.9999999999999876,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 686.0,
+      "type": "PAYMENT",
+      "amount": 30004.39,
+      "oldbalanceOrg": 11011.0,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.0004521563016246734,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 695.0,
+      "type": "PAYMENT",
+      "amount": 5138.85,
+      "oldbalanceOrg": 332149.29,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.0004280506223331833,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 664.0,
+      "type": "PAYMENT",
+      "amount": 52902.24,
+      "oldbalanceOrg": 0.0,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.0004521563016246734,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 684.0,
+      "type": "PAYMENT",
+      "amount": 20028.76,
+      "oldbalanceOrg": 0.0,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.0004521563016246734,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 704.0,
+      "type": "TRANSFER",
+      "amount": 1593189.25,
+      "oldbalanceOrg": 1593189.25,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.6147014207916706,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 661.0,
+      "type": "CASH_IN",
+      "amount": 445696.33,
+      "oldbalanceOrg": 145429.0,
+      "oldbalanceDest": 355472.07
+    },
+    "expected_score": 0.0004280506223331833,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 680.0,
+      "type": "CASH_OUT",
+      "amount": 272716.64,
+      "oldbalanceOrg": 272716.64,
+      "oldbalanceDest": 1019542.34
+    },
+    "expected_score": 0.1649311407437175,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 692.0,
+      "type": "PAYMENT",
+      "amount": 4788.88,
+      "oldbalanceOrg": 58177.0,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.0004280506223331833,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 691.0,
+      "type": "PAYMENT",
+      "amount": 3058.88,
+      "oldbalanceOrg": 20025.0,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.0004521563016246734,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 656.0,
+      "type": "PAYMENT",
+      "amount": 7462.34,
+      "oldbalanceOrg": 0.0,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.0004521563016246734,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 731.0,
+      "type": "CASH_OUT",
+      "amount": 508929.61,
+      "oldbalanceOrg": 508929.61,
+      "oldbalanceDest": 161576.15
+    },
+    "expected_score": 0.14322405516598374,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 709.0,
+      "type": "PAYMENT",
+      "amount": 39089.49,
+      "oldbalanceOrg": 42923.0,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.0004521563016246734,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 681.0,
+      "type": "PAYMENT",
+      "amount": 4274.77,
+      "oldbalanceOrg": 60868.0,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.0004280506223331833,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 691.0,
+      "type": "CASH_OUT",
+      "amount": 285347.43,
+      "oldbalanceOrg": 164219.0,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.1649311407437175,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 659.0,
+      "type": "CASH_IN",
+      "amount": 406490.79,
+      "oldbalanceOrg": 10771.0,
+      "oldbalanceDest": 1415570.93
+    },
+    "expected_score": 0.0004521563016246734,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 636.0,
+      "type": "CASH_OUT",
+      "amount": 1455839.54,
+      "oldbalanceOrg": 1455839.54,
+      "oldbalanceDest": 149698.53
+    },
+    "expected_score": 0.9999994304743358,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 702.0,
+      "type": "TRANSFER",
+      "amount": 3171085.59,
+      "oldbalanceOrg": 3171085.59,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.9999999999999876,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 742.0,
+      "type": "CASH_OUT",
+      "amount": 303846.74,
+      "oldbalanceOrg": 303846.74,
+      "oldbalanceDest": 343660.89
+    },
+    "expected_score": 0.1649311407437175,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 659.0,
+      "type": "CASH_OUT",
+      "amount": 120212.54,
+      "oldbalanceOrg": 0.0,
+      "oldbalanceDest": 1479149.4
+    },
+    "expected_score": 0.00046624321602405084,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 670.0,
+      "type": "CASH_OUT",
+      "amount": 1938347.14,
+      "oldbalanceOrg": 1938347.14,
+      "oldbalanceDest": 294911.92
+    },
+    "expected_score": 0.9999999999999984,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 728.0,
+      "type": "CASH_OUT",
+      "amount": 119143.75,
+      "oldbalanceOrg": 119143.75,
+      "oldbalanceDest": 131451.57
+    },
+    "expected_score": 0.1649311407437175,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 731.0,
+      "type": "TRANSFER",
+      "amount": 219275.19,
+      "oldbalanceOrg": 219275.19,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 2.644229840257783e-35,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 688.0,
+      "type": "TRANSFER",
+      "amount": 589286.98,
+      "oldbalanceOrg": 25546.0,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.0003882910997443991,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 709.0,
+      "type": "CASH_IN",
+      "amount": 159947.42,
+      "oldbalanceOrg": 66054.0,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.0004280506223331833,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 715.0,
+      "type": "CASH_OUT",
+      "amount": 192399.04,
+      "oldbalanceOrg": 119488.0,
+      "oldbalanceDest": 349914.44
+    },
+    "expected_score": 0.1649311407437175,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 640.0,
+      "type": "CASH_OUT",
+      "amount": 101638.41,
+      "oldbalanceOrg": 39912.0,
+      "oldbalanceDest": 563766.9
+    },
+    "expected_score": 0.003541162814772038,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 692.0,
+      "type": "CASH_OUT",
+      "amount": 137337.44,
+      "oldbalanceOrg": 133527.0,
+      "oldbalanceDest": 1060988.79
+    },
+    "expected_score": 0.1649311407437175,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 649.0,
+      "type": "TRANSFER",
+      "amount": 30674.98,
+      "oldbalanceOrg": 30674.98,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.5513712750260215,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 692.0,
+      "type": "CASH_IN",
+      "amount": 363131.83,
+      "oldbalanceOrg": 606099.0,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.0004251490540444482,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 637.0,
+      "type": "CASH_IN",
+      "amount": 87978.27,
+      "oldbalanceOrg": 5528552.42,
+      "oldbalanceDest": 2208748.58
+    },
+    "expected_score": 0.0004251490540444482,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 636.0,
+      "type": "CASH_OUT",
+      "amount": 222517.07,
+      "oldbalanceOrg": 222517.07,
+      "oldbalanceDest": 130580.85
+    },
+    "expected_score": 0.1649311407437175,
+    "actual_fraud": 1
+  },
+  {
+    "features": {
+      "step": 659.0,
+      "type": "CASH_OUT",
+      "amount": 44719.29,
+      "oldbalanceOrg": 0.0,
+      "oldbalanceDest": 1241079.98
+    },
+    "expected_score": 0.0005141160039095313,
+    "actual_fraud": 0
+  },
+  {
+    "features": {
+      "step": 637.0,
+      "type": "CASH_OUT",
+      "amount": 346565.23,
+      "oldbalanceOrg": 22150.0,
+      "oldbalanceDest": 0.0
+    },
+    "expected_score": 0.00049012719664745,
+    "actual_fraud": 0
+  }
+]
