@@ -1,0 +1,52 @@
+{
+  "name": "verify",
+  "description": "Fictional deterministic simulation; no real customer or media data.",
+  "expected_decision": "VERIFY",
+  "events": [
+    {
+      "schema_version": 1,
+      "simulated": true,
+      "event_id": "verify-01",
+      "tenant_id": "demo",
+      "user_id": "fictional-verify",
+      "device_id": "device-verify",
+      "source_id": "mock-device",
+      "event_type": "device",
+      "timestamp": "2026-01-01T12:00:00Z",
+      "data": {
+        "new_device": true,
+        "failed_logins": 0
+      }
+    },
+    {
+      "schema_version": 1,
+      "simulated": true,
+      "event_id": "verify-02",
+      "tenant_id": "demo",
+      "user_id": "fictional-verify",
+      "device_id": "device-verify",
+      "source_id": "mock-call",
+      "event_type": "call",
+      "timestamp": "2026-01-01T12:01:00Z",
+      "data": {
+        "suspicious": true
+      }
+    },
+    {
+      "schema_version": 1,
+      "simulated": true,
+      "event_id": "verify-03",
+      "tenant_id": "demo",
+      "user_id": "fictional-verify",
+      "device_id": "device-verify",
+      "source_id": "mock-payment",
+      "event_type": "payment",
+      "timestamp": "2026-01-01T12:02:00Z",
+      "data": {
+        "amount_minor": 18500,
+        "currency": "USD",
+        "new_payee": false
+      }
+    }
+  ]
+}

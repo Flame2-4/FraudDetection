@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>FraudGuard AI · Local simulation</title>
+  <link rel="stylesheet" href="/dashboard.css"><script src="/dashboard.js" defer></script>
+</head>
+<body>
+<header><p class="eyebrow">FraudGuard AI</p><h1>Cross-channel risk console</h1>
+<p class="banner">SIMULATION ONLY · Synthetic telemetry · Explicit rules, no trained ML or real deepfake detection</p></header>
+<main>
+<section aria-labelledby="controls"><h2 id="controls">Load and replay a fictional scenario</h2>
+<div class="controls"><label>Scenario <select id="scenario"><option value="normal">Normal activity</option><option value="verify">Suspicious cross-channel activity</option><option value="freeze">Correlated high risk</option></select></label>
+<button id="replay">Load / replay deterministically</button></div>
+<p>Replay uses stable event IDs; existing identical records are reused. The clock below is event time, not today's wall clock.</p>
+<div class="controls"><label>Tenant <input id="tenant" value="demo" maxlength="80"></label>
+<label>Fictional user <input id="user" value="fictional-normal" maxlength="80"></label>
+<label>Device <input id="device" value="device-normal" maxlength="80"></label>
+<label>As of (optional ISO UTC) <input id="at" placeholder="2026-01-01T13:02:00Z"></label><button id="refresh">Refresh</button></div>
+<p id="status" role="status">Choose a scenario to begin.</p></section>
+<section class="metrics" aria-label="Current event-time assessment"><article><h2>Risk index</h2><strong id="risk">—</strong><p>Heuristic 0–100, not probability</p></article>
+<article><h2>Simulated decision</h2><strong id="decision">—</strong><p id="reason"></p></article>
+<article><h2>Simulated cooling-off</h2><strong id="block">—</strong><p id="expiry"></p></article></section>
+<section><h2>Correlation and coverage</h2><pre id="correlation">No events loaded.</pre></section>
+<section><h2>Risk factors and explanations</h2><div class="scroll"><table><thead><tr><th>Rule / group</th><th>Weight</th><th>Strength</th><th>Awarded points</th><th>Evidence / explanation</th></tr></thead><tbody id="factors"></tbody></table></div><p id="interaction"></p></section>
+<section><h2>Recent synthetic events</h2><div class="scroll"><table><thead><tr><th>Event time</th><th>ID / channel</th><th>User / device</th><th>Simulated data</th></tr></thead><tbody id="events"></tbody></table></div></section>
+<section><h2>Simulated payment decision history</h2><div class="scroll"><table><thead><tr><th>Event time / ID</th><th>Risk</th><th>Simulated decision</th><th>Reason / expiry</th></tr></thead><tbody id="decisions"></tbody></table></div></section>
+<section><h2>Human review</h2><p>An authorized operator in a future secured deployment would inspect the evidence timeline, linkage, missing channels and benign alternatives, verify identity through an approved independent channel, then record a reviewed disposition and rationale. This local MVP has no authentication or review mutation endpoint. Its simulated FREEZE never freezes an account or moves money.</p></section>
+</main><footer>Local demo tool. No production security or fraud-accuracy claims. History shows the latest deterministic projections, which late events may revise.</footer>
+</body></html>

@@ -1,0 +1,68 @@
+{
+  "name": "freeze",
+  "description": "Fictional deterministic simulation; no real customer or media data.",
+  "expected_decision": "FREEZE",
+  "events": [
+    {
+      "schema_version": 1,
+      "simulated": true,
+      "event_id": "freeze-01",
+      "tenant_id": "demo",
+      "user_id": "fictional-freeze",
+      "device_id": "device-freeze",
+      "source_id": "mock-device",
+      "event_type": "device",
+      "timestamp": "2026-01-01T12:00:00Z",
+      "data": {
+        "new_device": true,
+        "failed_logins": 4
+      }
+    },
+    {
+      "schema_version": 1,
+      "simulated": true,
+      "event_id": "freeze-02",
+      "tenant_id": "demo",
+      "user_id": "fictional-freeze",
+      "device_id": "device-freeze",
+      "source_id": "mock-call",
+      "event_type": "call",
+      "timestamp": "2026-01-01T12:01:00Z",
+      "data": {
+        "suspicious": true
+      }
+    },
+    {
+      "schema_version": 1,
+      "simulated": true,
+      "event_id": "freeze-03",
+      "tenant_id": "demo",
+      "user_id": "fictional-freeze",
+      "device_id": "device-freeze",
+      "source_id": "mock-audio",
+      "event_type": "audio",
+      "timestamp": "2026-01-01T12:01:00Z",
+      "data": {
+        "spoof_risk": 0.96,
+        "quality": 1.0,
+        "observation_id": "fictional-call-freeze"
+      }
+    },
+    {
+      "schema_version": 1,
+      "simulated": true,
+      "event_id": "freeze-04",
+      "tenant_id": "demo",
+      "user_id": "fictional-freeze",
+      "device_id": "device-freeze",
+      "source_id": "mock-payment",
+      "event_type": "payment",
+      "timestamp": "2026-01-01T12:02:00Z",
+      "data": {
+        "amount_minor": 950000,
+        "currency": "USD",
+        "new_payee": true
+      }
+    }
+  ]
+}
