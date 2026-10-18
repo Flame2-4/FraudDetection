@@ -2,7 +2,8 @@
 // No inference here: browser decoding, manual crops, and same-origin job transport only.
 (() => {
   const $ = id => document.getElementById(id);
-  const video = $("video-preview"), picker = $("video-file"), selector = $("video-frame");
+  let video = $("video-preview");
+  const picker = $("video-file"), selector = $("video-frame");
   const canvas = $("crop-preview"), context = canvas.getContext("2d");
   const names = ["x", "y", "w", "h"];
   let generation = 0, url = null, frames = [], index = 0, busy = false, loading = false;
@@ -16,25 +17,39 @@
   }
   function reset() {
     generation++; controller.abort(); controller = new AbortController();
-    video.pause(); video.removeAttribute("src"); video.load();
+    // A fresh element isolates queued media events from the previous source.
+    // Abort listeners first, detach the old source, then revoke its object URL.
+    const previous = video;
+    previous.pause(); previous.removeAttribute("src"); previous.load();
+    video = previous.cloneNode(false);
+    video.preload = "auto";
+    previous.replaceWith(video);
     if (url) URL.revokeObjectURL(url);
     url = null; frames = []; selector.replaceChildren(); busy = loading = false;
     context.clearRect(0, 0, canvas.width, canvas.height);
     $("video-result").hidden = true; $("video-error").hidden = true;
     controls(); status("Select a video to begin. Submitted jobs finish independently and expire automatically.");
   }
-  function waitEvent(name, action, signal) {
+  function waitEvent(name, action, signal, ready = () => true) {
+    // Capture this source's element: cancellation must not clean up a replacement.
+    const media = video;
     return new Promise((resolve, reject) => {
-      const clean = () => { clearTimeout(timer); video.removeEventListener(name, ok); video.removeEventListener("error", fail); signal.removeEventListener("abort", abort); };
-      const ok = () => { clean(); resolve(); };
+      const clean = () => { clearTimeout(timer); media.removeEventListener(name, ok); media.removeEventListener("error", fail); signal.removeEventListener("abort", abort); };
+      const ok = () => { if (!ready()) return; clean(); resolve(); };
       const fail = () => { clean(); reject(new Error("Video decoding failed. Try a browser-supported MP4/H.264 or WebM file.")); };
       const abort = () => { clean(); reject(new DOMException("Cancelled", "AbortError")); };
-      const timer = setTimeout(() => { clean(); reject(new Error("Video frame decoding timed out.")); }, 10000);
-      video.addEventListener(name, ok, {once: true}); video.addEventListener("error", fail, {once: true});
+      const timer = setTimeout(() => { clean(); reject(new Error(`Video ${name === "loadedmetadata" ? "metadata loading" : "frame decoding"} timed out.`)); }, 10000);
+      media.addEventListener(name, ok); media.addEventListener("error", fail, {once: true});
       signal.addEventListener("abort", abort, {once: true});
       if (signal.aborted) { abort(); return; }
-      action();
+      try { action(); } catch (err) { clean(); reject(err); }
     });
+  }
+  async function waitForPixels(signal) {
+    const media = video;
+    if (media.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA && !media.seeking) return;
+    await waitEvent("loadeddata", () => {}, signal,
+      () => media.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA && !media.seeking);
   }
   function crop() {
     if (!frames.length || loading || busy) return;
@@ -58,7 +73,9 @@
     loading = true; controls();
     try {
       const frame = frames[index];
-      if (Math.abs(video.currentTime - frame.timestamp) > .0001) await waitEvent("seeked", () => { video.currentTime = frame.timestamp; }, signal);
+      if (Math.abs(video.currentTime - frame.timestamp) > .0001) await waitEvent("seeked", () => { video.currentTime = frame.timestamp; }, signal,
+        () => !video.seeking);
+      await waitForPixels(signal);
       if (token !== generation) return;
       names.forEach((n,i) => { $("crop-"+n).value = frame.crop[i]; });
       loading = false; crop();
@@ -73,7 +90,12 @@
       if (file.size > 50*1024*1024 || file.size === 0) throw new Error("Choose a nonempty video up to 50 MiB.");
       if (!["video/mp4", "video/webm"].includes(file.type) || !video.canPlayType(file.type)) throw new Error("Choose a browser-supported MP4 or WebM video.");
       url = URL.createObjectURL(file);
-      await waitEvent("loadeddata", () => { video.src = url; video.load(); }, signal);
+      status("Loading video metadata…");
+      const media = video, source = url;
+      await waitEvent("loadedmetadata", () => { media.src = source; media.load(); }, signal,
+        () => media.currentSrc === source && media.readyState >= HTMLMediaElement.HAVE_METADATA);
+      // Dimensions/duration are meaningful only after this source's metadata.
+      // Pixel readiness is checked separately before the first canvas draw.
       if (token !== generation) return;
       if (!Number.isFinite(video.duration) || video.duration <= 0 || video.duration > 60) throw new Error("Video must have a finite duration within 60 seconds.");
       if (video.videoWidth > 1920 || video.videoHeight > 1080 || Math.min(video.videoWidth, video.videoHeight) < 32) throw new Error("Video dimensions must be within 1920×1080 and at least 32×32.");
@@ -83,7 +105,12 @@
       index = 0; await selectFrame();
     } catch (err) { if (token === generation) { reset(); error(err); } }
   });
-  selector.addEventListener("change", async () => { index = Number(selector.value); try { await selectFrame(); } catch (err) { error(err); } });
+  selector.addEventListener("change", async () => {
+    const token = generation;
+    index = Number(selector.value);
+    try { await selectFrame(); }
+    catch (err) { if (token === generation && err.name !== "AbortError") error(err); }
+  });
   names.forEach(n => $("crop-"+n).addEventListener("input", () => {
     if (!frames.length) return;
     frames[index].image = null; controls(); $("video-result").hidden = true;

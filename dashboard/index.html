@@ -71,7 +71,7 @@
       <label for="video-file">Select a consented or synthetic video (MP4 / WebM)</label>
       <input id="video-file" type="file" accept="video/mp4,video/webm">
       <p class="muted">Maximum 50 MiB, 60 seconds, 1920×1080. Browser codec support required. Only five cropped JPEG frames leave your browser.</p>
-      <video id="video-preview" muted playsinline preload="metadata" aria-label="Selected video frame"></video>
+      <video id="video-preview" muted playsinline preload="auto" aria-label="Selected video frame"></video>
       <p>Select a frame, adjust its face region, then confirm every frame. Coordinates are percentages of the source frame. Select the largest face box. Preview includes 25% padding on each side, clipped to frame boundaries. No automatic detection or tracking; manual boxes can differ from Kaggle Haar detections.</p>
       <label for="video-frame">Frame to inspect</label><select id="video-frame" disabled></select>
       <fieldset id="video-crop" disabled><legend>Manual face region for this frame (%)</legend>

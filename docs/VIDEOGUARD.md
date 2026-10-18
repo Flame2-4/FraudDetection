@@ -17,7 +17,26 @@ finite duration <=60 seconds and dimensions 32×32 through 1920×1080. No origin
 video is uploaded. Five timestamp samples span the clip; the last is at 99.9%
 to avoid seeking beyond available media. Native seeking is approximate: it is
 not identical to OpenCV's linspace over frame indices, especially with variable
-frame rates and very short clips. Decode/seek operations time out after 10s.
+frame rates and very short clips. Metadata loading, initial pixel readiness and seeking each have a 10s timeout.
+Each file selection gets a fresh video element with `preload="auto"`. Metadata
+listeners are attached before assigning the object URL; dimension/duration
+validation runs only after that source emits `loadedmetadata` with
+`HAVE_METADATA`. Canvas drawing separately waits for decoded pixels. This avoids
+using a stale `loadeddata` event from a reused/reset element as a metadata gate.
+
+File replacement/clear aborts pending listeners, detaches the old media source,
+then revokes its object URL. The active URL stays valid through preview and
+sampling. Error cleanup resets the media element, so zero dimensions/readyState
+observed after an error do not identify the original failure state. A failure
+before metadata now reports metadata timeout or decoding failure rather than
+premature dimension validation.
+
+CSP remains `connect-src 'self'` and `media-src 'self' blob:`. Native video
+loading uses `media-src`; no JavaScript blob fetch is needed. A manually issued
+`fetch(blobURL)` is intentionally blocked and does not establish that the native
+video decoder was blocked. Browser regression tests cover delayed metadata,
+early/stale `loadeddata`, replacement, cancellation, timeout, URL lifetime and
+a synthetic 1280×720 MP4, without weakening CSP.
 
 For each sample the operator selects the largest face using percentage controls.
 The preview adds `floor(0.25 * max(face_width, face_height))` pixels on every side,
