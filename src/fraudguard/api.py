@@ -5,8 +5,10 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 import logging
 import sqlite3
+import threading
 from urllib.parse import parse_qs, urlsplit
 
+from .video import VideoJobs, MAX_BODY as VIDEO_MAX_BODY
 from .analyzer import analyze, samples
 from .demos import ROOT, SCENARIOS, replay
 from .engine import Engine
@@ -15,6 +17,7 @@ from .models import CapacityError, ConflictError, ValidationError, strict_json
 MAX_BODY = 65536
 ASSETS = {"/": ("index.html", "text/html; charset=utf-8"),
           "/dashboard.js": ("dashboard.js", "text/javascript; charset=utf-8"),
+          "/videoguard.js": ("videoguard.js", "text/javascript; charset=utf-8"),
           "/dashboard.css": ("dashboard.css", "text/css; charset=utf-8")}
 
 
@@ -44,7 +47,7 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("X-Content-Type-Options", "nosniff")
         self.send_header("Referrer-Policy", "no-referrer")
         self.send_header("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self'; "
-                         "connect-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'none'")
+                         "connect-src 'self'; media-src 'self' blob:; object-src 'none'; frame-ancestors 'none'; base-uri 'none'")
         self.end_headers()
         self.wfile.write(raw)
 
@@ -73,7 +76,16 @@ class Handler(BaseHTTPRequestHandler):
                 raise ValidationError("duplicate query parameters are not allowed")
             query = {k: v[0] for k, v in query_lists.items()}
             if post:
-                self._post(url.path, query)
+                if url.path == "/api/video/jobs":
+                    if not self.server.video_uploads.acquire(blocking=False):
+                        self._respond(429, {"error": "Video upload capacity reached"})
+                        return
+                    try:
+                        self._post(url.path, query)
+                    finally:
+                        self.server.video_uploads.release()
+                else:
+                    self._post(url.path, query)
             else:
                 self._get(url.path, query)
         except (ValidationError, ValueError) as exc:
@@ -107,8 +119,13 @@ class Handler(BaseHTTPRequestHandler):
                 db.execute("SELECT 1 FROM settings LIMIT 1").fetchone()
             self._respond(200, {"status": "ok", "simulated": True, "model": "explicit fusion rules + portable financial ML",
                                 "financial_model": self.engine.financial_model.identity,
-                                "audio_video": "simulated inputs; no real detectors",
+                                "audio_video": "simulated fusion inputs; VideoGuard analysis is separate",
                                 "policy": self.engine.policy.to_dict()})
+        elif path.startswith("/api/video/jobs/"):
+            if query:
+                raise ValidationError("video jobs do not accept query parameters")
+            job = self.server.video_jobs.get(path.removeprefix("/api/video/jobs/"))
+            self._respond(200 if job else 404, job or {"error": "job unavailable or expired"})
         elif path == "/api/financial/samples":
             if query:
                 raise ValidationError("financial samples do not accept query parameters")
@@ -147,8 +164,9 @@ class Handler(BaseHTTPRequestHandler):
             length = int(lengths[0])
         except ValueError as exc:
             raise ValidationError("invalid Content-Length") from exc
-        if not 1 <= length <= MAX_BODY:
-            self._respond(413, {"error": f"request body must be 1–{MAX_BODY} bytes"})
+        limit = VIDEO_MAX_BODY if path == "/api/video/jobs" else MAX_BODY
+        if not 1 <= length <= limit:
+            self._respond(413, {"error": f"request body must be 1–{limit} bytes"})
             return
         if self.headers.get("Content-Type", "").split(";")[0].strip() != "application/json":
             self._respond(415, {"error": "Content-Type must be application/json"})
@@ -157,7 +175,9 @@ class Handler(BaseHTTPRequestHandler):
         if len(raw) != length:
             raise ValidationError("incomplete request body")
         value = strict_json(raw)
-        if path == "/api/financial/analyze":
+        if path == "/api/video/jobs":
+            self._respond(202, self.server.video_jobs.submit(value))
+        elif path == "/api/financial/analyze":
             self._respond(200, analyze(value, self.engine.financial_model))
         elif path == "/api/events":
             events = value["events"] if isinstance(value, dict) and set(value) == {"events"} else [value]
@@ -172,8 +192,19 @@ class Handler(BaseHTTPRequestHandler):
             self._respond(404, {"error": "unknown endpoint"})
 
 
-def make_server(engine: Engine, host: str = "127.0.0.1", port: int = 8000) -> ThreadingHTTPServer:
+class VideoServer(ThreadingHTTPServer):
+    """Clean up the ephemeral inference worker with the HTTP server."""
+
+    def server_close(self):
+        super().server_close()
+        self.video_jobs.close()
+
+
+def make_server(engine: Engine, host: str = "127.0.0.1", port: int = 8000, *, video_jobs=None) -> ThreadingHTTPServer:
     """Return a local-only server. Port zero supports isolated integration tests."""
     if host not in {"localhost", "127.0.0.1"}:
         raise ValidationError("the simulation API must bind localhost or 127.0.0.1")
-    return ThreadingHTTPServer((host, port), partial(Handler, engine=engine))
+    server = VideoServer((host, port), partial(Handler, engine=engine))
+    server.video_uploads = threading.BoundedSemaphore(2)
+    server.video_jobs = video_jobs if video_jobs is not None else VideoJobs()
+    return server

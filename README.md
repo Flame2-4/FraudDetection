@@ -3,8 +3,9 @@
 An original, local cross-channel fraud **simulation** using Python's standard
 library, transparent rules and SQLite. It correlates fictional payments, device
 telemetry, calls, and simulated audio/video suspicion. It now includes a trained
-portable financial model when five explicit features are supplied. Audio/video inputs remain simulated: there is no real deepfake
-detector, bank integration, money movement or real account freeze.
+portable financial model when five explicit features are supplied. Fusion audio/video inputs remain simulated. An optional, separate VideoGuard panel
+uses browser-extracted manual face crops and local CPU image-model inference.
+There is no bank integration, money movement or real account freeze.
 The heuristic fusion risk index and uncalibrated financial ML score are separate.
 
 Target: Python **3.12**, CPU-only LinuxONE **s390x**. Current validation was on
@@ -169,3 +170,13 @@ For flagged cases, a future authorized reviewer must examine the evidence and
 benign alternatives, independently verify the user, and record a disposition and
 rationale. This MVP has no authenticated review-action endpoint; demo controls
 only replay synthetic events. No simulated decision is a real financial action.
+
+## Experimental VideoGuard
+
+VideoGuard samples five frames in the browser and previews manual face boxes
+with 25% padding. Same-origin asynchronous jobs run the locally installed image
+model on LinuxONE; only an uncalibrated mean sampled-frame score is displayed.
+No video classification threshold or financial/fusion action is applied.
+No FFmpeg/OpenCV is needed. Optional inference uses the existing target
+Torch/Transformers/Pillow environment and trusted local safetensors.
+See [VideoGuard deployment and acceptance checks](docs/VIDEOGUARD.md).

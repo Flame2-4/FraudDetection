@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>FraudGuard AI · Live Transaction Analyzer</title>
-  <link rel="stylesheet" href="/dashboard.css"><script src="/dashboard.js" defer></script>
+  <link rel="stylesheet" href="/dashboard.css"><script src="/dashboard.js" defer></script><script src="/videoguard.js" defer></script>
 </head>
 <body>
 <a class="skip-link" href="#analyzer">Skip to transaction analyzer</a>
@@ -12,6 +12,7 @@
   <p class="nav-label">WORKSPACE</p>
   <nav aria-label="Primary navigation">
     <a href="#analyzer" aria-current="location"><span aria-hidden="true">01</span>Transaction analyzer</a>
+    <a href="#videoguard"><span aria-hidden="true">V</span>VideoGuard analysis</a>
     <a href="#fusion"><span aria-hidden="true">02</span>Cross-channel fusion</a>
     <a href="#events-panel"><span aria-hidden="true">03</span>Event investigation</a>
     <a href="#history-panel"><span aria-hidden="true">04</span>Decision history</a>
@@ -61,6 +62,40 @@
   </div>
 </section>
 <div class="section-divider"><span>INVESTIGATION WORKSPACE</span><p>Explore correlated telemetry and simulated policy decisions below.</p></div>
+<section id="videoguard" class="analyzer-section" aria-labelledby="video-title">
+  <div class="section-heading"><div><p class="eyebrow">EXPERIMENTAL VIDEO INTELLIGENCE</p><h2 id="video-title">VideoGuard · sampled-frame analysis</h2></div><span class="quiet-badge">Advisory only</span></div>
+  <p>Local browser decoding · real server inference when the model is installed. No automatic face detection. Separate from simulated fusion video signals and all payment decisions.</p>
+  <p class="video-warning-banner">Experimental, uncalibrated scores, not real-world probabilities. Frame-based analysis, not a temporal video model. No validated video classification threshold or proven real-world accuracy.</p>
+  <div class="analyzer-grid">
+    <div>
+      <label for="video-file">Select a consented or synthetic video (MP4 / WebM)</label>
+      <input id="video-file" type="file" accept="video/mp4,video/webm">
+      <p class="muted">Maximum 50 MiB, 60 seconds, 1920×1080. Browser codec support required. Only five cropped JPEG frames leave your browser.</p>
+      <video id="video-preview" muted playsinline preload="metadata" aria-label="Selected video frame"></video>
+      <p>Select a frame, adjust its face region, then confirm every frame. Coordinates are percentages of the source frame. Select the largest face box. Preview includes 25% padding on each side, clipped to frame boundaries. No automatic detection or tracking; manual boxes can differ from Kaggle Haar detections.</p>
+      <label for="video-frame">Frame to inspect</label><select id="video-frame" disabled></select>
+      <fieldset id="video-crop" disabled><legend>Manual face region for this frame (%)</legend>
+        <div class="form-grid">
+          <label>Left <input id="crop-x" type="number" min="0" max="99" value="25"></label>
+          <label>Top <input id="crop-y" type="number" min="0" max="99" value="15"></label>
+          <label>Width <input id="crop-w" type="number" min="1" max="100" value="50"></label>
+          <label>Height <input id="crop-h" type="number" min="1" max="100" value="70"></label>
+        </div>
+        <canvas id="crop-preview" width="320" height="320" aria-label="Preview of manually selected face crop"></canvas>
+        <button id="video-confirm" type="button">Confirm crop for this frame</button>
+      </fieldset>
+      <button id="video-analyze" class="primary-button" type="button" disabled>Analyze sampled frames</button>
+      <button id="video-reset" type="button">Clear video / stop waiting</button>
+    </div>
+    <article class="analysis-panel" aria-labelledby="video-result-title">
+      <h3 id="video-result-title">VideoGuard assessment</h3>
+      <p id="video-status" role="status" aria-live="polite">Select a video to begin.</p>
+      <p id="video-error" role="alert" hidden></p>
+      <div id="video-result" hidden><p>Mean sampled-frame Deepfake score (0–1)</p><div id="video-score" class="model-score"></div><progress id="video-meter" max="1" value="0" aria-label="Uncalibrated mean sampled-frame deepfake score"></progress><p id="video-count"></p><p id="video-model"></p><p id="video-warning"></p></div>
+      <p class="muted">No classification threshold is applied. A low score does not establish authenticity. Missing faces, crop errors, compression and sampling may change results. Results expire after five minutes; no frames or results are added to financial history.</p>
+    </article>
+  </div>
+</section>
 <section id="fusion" aria-labelledby="controls"><h2 id="controls">Load and replay a fictional scenario</h2>
 <div class="controls"><label>Scenario <select id="scenario"><option value="normal">Normal activity</option><option value="verify">Suspicious cross-channel activity</option><option value="freeze">Correlated high risk</option></select></label>
 <button id="replay">Load / replay deterministically</button></div>
