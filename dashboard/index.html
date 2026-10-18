@@ -2,14 +2,66 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>FraudGuard AI · Local simulation</title>
+  <title>FraudGuard AI · Live Transaction Analyzer</title>
   <link rel="stylesheet" href="/dashboard.css"><script src="/dashboard.js" defer></script>
 </head>
 <body>
-<header><p class="eyebrow">FraudGuard AI</p><h1>Cross-channel risk console</h1>
-<p class="banner">SIMULATED PAYMENTS · Trained financial ML · Audio/video signals remain simulated</p></header>
+<a class="skip-link" href="#analyzer">Skip to transaction analyzer</a>
+<aside class="sidebar" aria-label="FraudGuard workspace">
+  <a class="brand" href="#analyzer"><span class="brand-mark" aria-hidden="true">FG</span><span>FraudGuard<span class="brand-subtitle">AI · INVESTIGATION WORKSPACE</span></span></a>
+  <p class="nav-label">WORKSPACE</p>
+  <nav aria-label="Primary navigation">
+    <a href="#analyzer" aria-current="location"><span aria-hidden="true">01</span>Transaction analyzer</a>
+    <a href="#fusion"><span aria-hidden="true">02</span>Cross-channel fusion</a>
+    <a href="#events-panel"><span aria-hidden="true">03</span>Event investigation</a>
+    <a href="#history-panel"><span aria-hidden="true">04</span>Decision history</a>
+    <a href="#review-panel"><span aria-hidden="true">05</span>Human review</a>
+  </nav>
+  <div class="sidebar-note"><span class="live-dot" aria-hidden="true"></span><b>Research / demo prototype</b><p>Real financial inference.<br>Simulated enforcement.<br>Human judgment required.</p></div>
+  <p class="sidebar-foot">IBM Z DATATHON<br>CPU-first · Python 3.12</p>
+</aside>
+<div class="workspace">
+<header class="page-header"><div><p class="eyebrow">FINANCIAL INTELLIGENCE / LIVE ANALYSIS</p><h1>Live Transaction Analyzer</h1><p class="header-description">Explore a transaction. Inspect the signal. Keep the decision in context.</p></div><span class="connection-badge" id="analyzer-connection" role="status">Connecting to model…</span>
+<p class="banner">RESEARCH / DEMO PROTOTYPE · SIMULATED PAYMENTS · Trained financial ML · Audio/video signals remain simulated</p></header>
 <main>
-<section aria-labelledby="controls"><h2 id="controls">Load and replay a fictional scenario</h2>
+<section id="analyzer" class="analyzer-section" aria-labelledby="analyzer-title">
+  <div class="section-heading"><div><p class="eyebrow">TRANSACTION INTELLIGENCE</p><h2 id="analyzer-title">From transaction to insight</h2></div><span class="quiet-badge">Real model · advisory only</span></div>
+  <p class="section-intro">Analyze with our verified portable financial model. Enter original PaySim simulation units; amounts are not labeled or converted to USD.</p>
+  <div class="analyzer-grid">
+    <form id="analyzer-form" novalidate>
+      <fieldset id="analyzer-fields">
+        <legend class="sr-only">Five trained financial model inputs</legend>
+        <div class="form-grid">
+          <div class="field"><label for="transaction-type">Transaction type</label><select id="transaction-type" name="type" required aria-describedby="type-help type-error"><option value="CASH_IN">CASH_IN · Deposit</option><option value="CASH_OUT" selected>CASH_OUT · Withdrawal</option><option value="DEBIT">DEBIT · Debit transaction</option><option value="PAYMENT">PAYMENT · Payment</option><option value="TRANSFER">TRANSFER · Transfer</option></select><small id="type-help">Choose the original PaySim transaction category.</small><span class="field-error" id="type-error"></span></div>
+          <div class="field"><label for="transaction-step">Transaction step <span class="help-tip" tabindex="0" role="note" aria-label="PaySim simulation time step, not a calendar date." data-tip="PaySim uses hourly simulation steps. This is not a date or timestamp.">?</span></label><input id="transaction-step" name="step" type="number" min="1" max="9007199254740991" step="1" value="714" required inputmode="numeric" aria-describedby="step-help step-error"><small id="step-help">Positive whole PaySim time step, not a calendar date.</small><span class="field-error" id="step-error"></span></div>
+          <div class="field field-wide"><label for="transaction-amount">Transaction amount <span class="unit-label">PaySim units</span></label><input id="transaction-amount" name="amount" type="number" min="0" step="any" value="8838.19" required inputmode="decimal" aria-describedby="amount-help amount-error"><small id="amount-help">Greater than zero. Keep the model's original units; no currency conversion.</small><span class="field-error" id="amount-error"></span></div>
+          <div class="field"><label for="sender-balance">Sender balance before transaction <span class="help-tip" tabindex="0" role="note" aria-label="Sender account balance before this transaction, in original PaySim units." data-tip="Use the sender balance before, not after, this transaction.">?</span></label><input id="sender-balance" name="oldbalanceOrg" type="number" min="0" step="any" value="8838.19" required inputmode="decimal" aria-describedby="sender-help oldbalanceOrg-error"><small id="sender-help">Original PaySim units. Zero is allowed.</small><span class="field-error" id="oldbalanceOrg-error"></span></div>
+          <div class="field"><label for="recipient-balance">Recipient balance before transaction <span class="help-tip" tabindex="0" role="note" aria-label="Recipient account balance before this transaction, in original PaySim units." data-tip="Use the recipient balance before, not after, this transaction.">?</span></label><input id="recipient-balance" name="oldbalanceDest" type="number" min="0" step="any" value="15334.27" required inputmode="decimal" aria-describedby="recipient-help oldbalanceDest-error"><small id="recipient-help">Original PaySim units. Zero is allowed.</small><span class="field-error" id="oldbalanceDest-error"></span></div>
+        </div>
+      </fieldset>
+      <div class="sample-area"><p class="mini-heading">TRY A VERIFIED EXAMPLE <span>Editable inputs, never preset predictions</span></p><div class="sample-buttons" role="group" aria-label="Sample transactions"><button type="button" class="sample-button" data-sample="low" aria-pressed="false" disabled>Low model score</button><button type="button" class="sample-button" data-sample="intermediate" aria-pressed="false" disabled>Intermediate model score</button><button type="button" class="sample-button" data-sample="high" aria-pressed="false" disabled>High model score</button></div></div>
+      <div class="analysis-actions"><button type="submit" id="analyze-submit" class="primary-button"><span class="button-label">Analyze Transaction</span><span class="button-arrow" aria-hidden="true">↗</span></button><span class="privacy-note">Read-only analysis · nothing is persisted</span></div>
+      <p id="analyzer-status" class="analysis-status" role="status" aria-live="polite">Ready for input. Only use synthetic presentation data.</p>
+      <p id="analyzer-error" class="error-message" role="alert" hidden></p>
+    </form>
+    <article id="analyzer-result" class="analysis-panel" aria-labelledby="result-title" aria-busy="false" data-state="empty">
+      <div class="result-header"><p class="eyebrow">MODEL ASSESSMENT</p><span class="quiet-badge">Advisory only</span></div>
+      <h3 id="result-title">A clearer view of the signal</h3>
+      <div id="analyzer-empty" class="result-empty"><div class="signal-art" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div><p>Five inputs. One genuine model prediction.</p><p class="muted">Enter a transaction or choose an example, then click Analyze Transaction.</p></div>
+      <div id="analyzer-output" hidden>
+        <div class="score-heading"><span>Financial model score <span class="unit-label">0–1</span></span><span id="analyzer-classification" class="classification-badge"></span></div>
+        <div id="analyzer-score" class="model-score">—</div>
+        <div class="score-track"><progress id="analyzer-meter" value="0" max="1" aria-label="Uncalibrated financial model score"></progress><span class="threshold-marker" aria-hidden="true"></span></div>
+        <div class="score-scale"><span>0.00</span><span id="analyzer-threshold">Decision threshold 0.30</span><span>1.00</span></div>
+        <p id="analyzer-interpretation" class="interpretation"></p>
+        <details class="model-details"><summary>Model identity &amp; exact result</summary><dl><dt>Inference version</dt><dd id="analyzer-model-version"></dd><dt>Artifact SHA-256</dt><dd id="analyzer-model-hash"></dd><dt>Exact model score</dt><dd id="analyzer-exact-score"></dd><dt>Classification rule</dt><dd id="analyzer-rule"></dd></dl></details>
+      </div>
+      <div class="result-disclaimer"><b>A model signal, not a real-world probability.</b><p>This score is uncalibrated. It is separate from FraudGuard's 0–100 fusion risk index. Analysis does not approve, freeze, block, or move money.</p></div>
+    </article>
+  </div>
+</section>
+<div class="section-divider"><span>INVESTIGATION WORKSPACE</span><p>Explore correlated telemetry and simulated policy decisions below.</p></div>
+<section id="fusion" aria-labelledby="controls"><h2 id="controls">Load and replay a fictional scenario</h2>
 <div class="controls"><label>Scenario <select id="scenario"><option value="normal">Normal activity</option><option value="verify">Suspicious cross-channel activity</option><option value="freeze">Correlated high risk</option></select></label>
 <button id="replay">Load / replay deterministically</button></div>
 <p>Replay uses stable event IDs; existing identical records are reused. The clock below is event time, not today's wall clock.</p>
@@ -21,13 +73,15 @@
 <section class="metrics" aria-label="Current event-time assessment"><article><h2>Risk index</h2><strong id="risk">—</strong><p>Heuristic 0–100, not probability</p></article>
 <article><h2>Simulated decision</h2><strong id="decision">—</strong><p id="reason"></p></article>
 <article><h2>Simulated cooling-off</h2><strong id="block">—</strong><p id="expiry"></p></article></section>
-<section aria-labelledby="financial-heading"><h2 id="financial-heading">Financial ML assessment</h2>
+<section aria-labelledby="financial-heading"><h2 id="financial-heading">Correlated payment · financial ML</h2>
+<p>From persisted mock telemetry, separate from the read-only analyzer above.</p>
 <strong id="financial-score">Unavailable</strong><p id="financial-classification">Supply all five trained payment features to score a transaction.</p>
 <p id="financial-detail">Uncalibrated model score, separate from the 0–100 fusion risk index. Model classification does not freeze an account.</p></section>
 <section><h2>Correlation and coverage</h2><pre id="correlation">No events loaded.</pre></section>
 <section><h2>Risk factors and explanations</h2><div class="scroll"><table><thead><tr><th>Rule / group</th><th>Weight</th><th>Strength</th><th>Awarded points</th><th>Evidence / explanation</th></tr></thead><tbody id="factors"></tbody></table></div><p id="interaction"></p></section>
-<section><h2>Recent synthetic events</h2><div class="scroll"><table><thead><tr><th>Event time</th><th>ID / channel</th><th>User / device</th><th>Simulated data</th></tr></thead><tbody id="events"></tbody></table></div></section>
-<section><h2>Simulated payment decision history</h2><div class="scroll"><table><thead><tr><th>Event time / ID</th><th>Risk</th><th>Simulated decision</th><th>Financial ML score / classification</th><th>Reason / expiry</th></tr></thead><tbody id="decisions"></tbody></table></div></section>
-<section><h2>Human review</h2><p>An authorized operator in a future secured deployment would inspect the evidence timeline, linkage, missing channels and benign alternatives, verify identity through an approved independent channel, then record a reviewed disposition and rationale. This local MVP has no authentication or review mutation endpoint. Its simulated FREEZE never freezes an account or moves money.</p></section>
+<section id="events-panel"><h2>Recent synthetic events</h2><div class="scroll"><table><thead><tr><th>Event time</th><th>ID / channel</th><th>User / device</th><th>Simulated data</th></tr></thead><tbody id="events"></tbody></table></div></section>
+<section id="history-panel"><h2>Simulated payment decision history</h2><div class="scroll"><table><thead><tr><th>Event time / ID</th><th>Risk</th><th>Simulated decision</th><th>Financial ML score / classification</th><th>Reason / expiry</th></tr></thead><tbody id="decisions"></tbody></table></div></section>
+<section id="review-panel"><h2>Human review</h2><p>An authorized operator in a future secured deployment would inspect the evidence timeline, linkage, missing channels and benign alternatives, verify identity through an approved independent channel, then record a reviewed disposition and rationale. This local MVP has no authentication or review mutation endpoint. Its simulated FREEZE never freezes an account or moves money.</p></section>
 </main><footer>Local demo tool. No production security or fraud-accuracy claims. History shows the latest deterministic projections, which late events may revise.</footer>
+</div>
 </body></html>

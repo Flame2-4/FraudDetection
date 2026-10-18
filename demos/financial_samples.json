@@ -1,0 +1,38 @@
+[
+  {
+    "id": "low",
+    "label": "Low model score",
+    "reference_index": 51,
+    "features": {
+      "step": 714.0,
+      "type": "CASH_OUT",
+      "amount": 8838.19,
+      "oldbalanceOrg": 8838.19,
+      "oldbalanceDest": 15334.27
+    }
+  },
+  {
+    "id": "intermediate",
+    "label": "Intermediate model score",
+    "reference_index": 5,
+    "features": {
+      "step": 637.0,
+      "type": "CASH_OUT",
+      "amount": 3845765.36,
+      "oldbalanceOrg": 3845765.36,
+      "oldbalanceDest": 0.0
+    }
+  },
+  {
+    "id": "high",
+    "label": "High model score",
+    "reference_index": 63,
+    "features": {
+      "step": 733.0,
+      "type": "CASH_OUT",
+      "amount": 1548376.44,
+      "oldbalanceOrg": 1548376.44,
+      "oldbalanceDest": 2317541.56
+    }
+  }
+]

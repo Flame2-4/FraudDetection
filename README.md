@@ -12,6 +12,18 @@ Python 3.12.14 / x86_64 Linux, not LinuxONE. Core/API/offline dashboard need no
 third-party Python packages. The original `src/fraud_detector.py` remains a legacy
 starter and is not used by this application.
 
+## Live Transaction Analyzer
+
+The HTML dashboard now opens with an interactive transaction form. Enter the five
+PaySim features or load an editable low/intermediate/high model-score example,
+then click **Analyze Transaction**. The real backend model returns its score and
+>=0.30 classification immediately; no Python commands are needed during judging.
+The new analyzer is read-only: it does not save events or alter fusion decisions,
+history or cooling-off blocks. Original PaySim units are preserved, with no USD
+assumption. All enforcement remains simulated and audio/video inputs stay mocked.
+
+See [the presentation workflow and read-only API](docs/LIVE_ANALYZER.md).
+
 ## Financial ML integration
 
 Payment events can optionally include `data.financial_features` with `step`,

@@ -1,7 +1,7 @@
 # Validation evidence
 
-The original MVP results below are historical. Current financial integration
-results are recorded in the final section of this document.
+The original MVP results below are historical. Current financial integration and analyzer
+results are recorded in the final sections of this document.
 
 Executed 2026-10-18 in the current cloud environment. No LinuxONE/s390x host,
 real customer data, trained model, financial service, GPU or proprietary
@@ -135,3 +135,36 @@ s390x. That is not a claim that this task ran the new integrated backend there.
 Run the parity and regression gates from FINANCIAL_MODEL.md on the target before
 manually deploying. Parity demonstrates inference equivalence, not calibration,
 fraud accuracy, independent test splits or production banking safety.
+
+
+## Live Transaction Analyzer validation
+
+Executed with Python 3.12.14/x86_64; no LinuxONE deployment/restart was performed.
+
+- `PYTHONPATH=src python3.12 -S -m unittest discover -s tests -v`: **80 tests
+  passed**, including all 73 previous tests. Analyzer tests exercise all 100
+  verified references through the new HTTP endpoint, all five transaction types,
+  missing/extra/invalid fields, finite/range checks, JSON/HTTP error handling,
+  sample provenance and actual score ordering, and repeated requests.
+- A before/after snapshot of SQLite events, assessments, decisions, intervention
+  records and settings remains identical after successful, failed and repeated
+  analyses and sample requests. The existing simulated freeze remains enforced.
+- `PYTHONPATH=src python3.12 tests/browser_smoke.py`: passed real sample predictions,
+  editable samples and repeated analyses without refreshing, exact backend score
+  display, no inference on sample selection, client validation/no request on bad
+  inputs, loading and duplicate-submit protection, stale-score hiding, network/
+  HTTP/malformed-response errors, recovery, navigation and 390-pixel layout.
+- Existing browser checks for the three scenarios, event/decision histories,
+  duplicate replay, model display, simulated audio/video labels and exact cooling
+  expiry still pass. The passing run had no uncaught JavaScript errors or
+  external/CDN requests. Network/HTTP failures were intentionally injected by the
+  test harness to verify error states; no mock scores were used for predictions.
+- `node --check dashboard/dashboard.js` passed as an optional development syntax
+  check. Node is not a runtime requirement. Backend inference/model artifacts and
+  fusion/cooling policies were not changed.
+
+Desktop and mobile screenshots were inspected during development. The HTML UI is
+verified in Chromium; other browsers and the newly integrated analyzer on actual
+s390x hardware were not exercised here. The model remains the existing verified
+portable implementation. This is presentation polish for a research/demo
+prototype, not a new production security or fraud-accuracy certification.

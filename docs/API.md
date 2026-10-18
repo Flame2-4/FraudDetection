@@ -153,3 +153,18 @@ provenance and pinned model identity. Fusion bands remain 40/75; ML is advisory.
 Missing features return null score/classification, not zero. Legacy history rows
 may omit this new key. See [the complete contract and executable curl example](FINANCIAL_MODEL.md).
 Health now identifies portable financial ML and explicitly simulated audio/video.
+
+
+## Live Transaction Analyzer endpoints
+
+- POST `/api/financial/analyze`: body `{"features":{...}}` with exactly the five
+  trained inputs. Returns actual `financial_ml`, validated inputs and explicit
+  advisory/read-only flags; creates no event, decision or intervention record.
+- GET `/api/financial/samples`: editable low/intermediate/high example inputs
+  derived from verified references, plus model identity; contains no preset scores.
+
+These are additive routes; persisted event/fusion contracts are unchanged. The
+analyzer requires the five PaySim categories, positive finite amount, nonnegative
+finite balances and positive safe-integer simulation step. See
+[LIVE_ANALYZER.md](LIVE_ANALYZER.md) for the complete request, response semantics
+and presentation workflow. All existing local-only and request-size guards apply.

@@ -7,6 +7,7 @@ import logging
 import sqlite3
 from urllib.parse import parse_qs, urlsplit
 
+from .analyzer import analyze, samples
 from .demos import ROOT, SCENARIOS, replay
 from .engine import Engine
 from .models import CapacityError, ConflictError, ValidationError, strict_json
@@ -108,6 +109,10 @@ class Handler(BaseHTTPRequestHandler):
                                 "financial_model": self.engine.financial_model.identity,
                                 "audio_video": "simulated inputs; no real detectors",
                                 "policy": self.engine.policy.to_dict()})
+        elif path == "/api/financial/samples":
+            if query:
+                raise ValidationError("financial samples do not accept query parameters")
+            self._respond(200, samples(self.engine.financial_model))
         elif path == "/api/scenarios":
             if query:
                 raise ValidationError("scenarios does not accept query parameters")
@@ -152,7 +157,9 @@ class Handler(BaseHTTPRequestHandler):
         if len(raw) != length:
             raise ValidationError("incomplete request body")
         value = strict_json(raw)
-        if path == "/api/events":
+        if path == "/api/financial/analyze":
+            self._respond(200, analyze(value, self.engine.financial_model))
+        elif path == "/api/events":
             events = value["events"] if isinstance(value, dict) and set(value) == {"events"} else [value]
             result = self.engine.submit(events)
             self._respond(201 if result["accepted"] else 200, result)
