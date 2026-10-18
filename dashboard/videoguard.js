@@ -8,14 +8,37 @@
   const names = ["x", "y", "w", "h"];
   let generation = 0, url = null, frames = [], index = 0, busy = false, loading = false;
   let controller = new AbortController();
+  let diagnostics = null;
+  function record(event, media = video) {
+    if (!diagnostics) return;
+    diagnostics.events.push({event, elapsedMs:Math.round(performance.now()-diagnostics.started),
+      width:media.videoWidth, height:media.videoHeight,
+      duration:Number.isFinite(media.duration)?media.duration:null,
+      readyState:media.readyState, networkState:media.networkState, connected:media.isConnected,
+      sourceAssigned:media.hasAttribute("src"), sourceMatches:!!url && media.getAttribute("src")===url,
+      currentSourceMatches:!!url && media.currentSrc===url,
+      urlState:diagnostics.urlState, cancelled:controller.signal.aborted,
+      mediaErrorCode:media.error?.code || null});
+    diagnostics.events = diagnostics.events.slice(-30);
+    $("video-diagnostics").textContent = JSON.stringify(diagnostics,null,2);
+  }
+  function failure(code, message) {
+    if (diagnostics?.urlState === "revoked") code = "URL_REVOKED_BY_APPLICATION";
+    else if (url && video.getAttribute("src") !== url) code = "SOURCE_LOST";
+    const err = new Error(message); err.code=code; return err;
+  }
   const status = text => { $("video-status").textContent = text; };
-  const error = err => { $("video-error").hidden = false; $("video-error").textContent = err.message; };
+  const error = err => {
+    $("video-error").hidden = false; $("video-error").textContent = err.message;
+    if (diagnostics) { diagnostics.failureCode=err.code || "INPUT_OR_ANALYSIS_ERROR"; diagnostics.message=err.message; record("failure-before-cleanup"); }
+  };
   function controls() {
     selector.disabled = loading || busy || !frames.length;
     $("video-crop").disabled = loading || busy || !frames.length;
     $("video-analyze").disabled = loading || busy || !frames.length || frames.some(f => !f.image);
   }
-  function reset() {
+  function reset(reason = "cleared-or-replaced") {
+    record(`cleanup:${reason}`);
     generation++; controller.abort(); controller = new AbortController();
     // A fresh element isolates queued media events from the previous source.
     // Abort listeners first, detach the old source, then revoke its object URL.
@@ -24,10 +47,14 @@
     video = previous.cloneNode(false);
     video.preload = "auto";
     previous.replaceWith(video);
-    if (url) URL.revokeObjectURL(url);
+    if (url) {
+      URL.revokeObjectURL(url);
+      if (diagnostics) diagnostics.urlState = "revoked";
+    }
+    record(`released:${reason}`, previous);
     url = null; frames = []; selector.replaceChildren(); busy = loading = false;
     context.clearRect(0, 0, canvas.width, canvas.height);
-    $("video-result").hidden = true; $("video-error").hidden = true;
+    $("video-result").hidden = true; $("video-error").hidden = true; $("video-error").textContent = "";
     controls(); status("Select a video to begin. Submitted jobs finish independently and expire automatically.");
   }
   function waitEvent(name, action, signal, ready = () => true) {
@@ -36,9 +63,10 @@
     return new Promise((resolve, reject) => {
       const clean = () => { clearTimeout(timer); media.removeEventListener(name, ok); media.removeEventListener("error", fail); signal.removeEventListener("abort", abort); };
       const ok = () => { if (!ready()) return; clean(); resolve(); };
-      const fail = () => { clean(); reject(new Error("Video decoding failed. Try a browser-supported MP4/H.264 or WebM file.")); };
-      const abort = () => { clean(); reject(new DOMException("Cancelled", "AbortError")); };
-      const timer = setTimeout(() => { clean(); reject(new Error(`Video ${name === "loadedmetadata" ? "metadata loading" : "frame decoding"} timed out.`)); }, 10000);
+      const fail = () => { clean(); reject(failure(`MEDIA_ERROR_${media.error?.code || "UNKNOWN"}`,
+        `Video decoding failed (media error ${media.error?.code || "unknown"}). Try a browser-supported MP4/H.264 or WebM file.`)); };
+      const abort = () => { clean(); record(`cancelled:${name}`, media); reject(new DOMException("Cancelled", "AbortError")); };
+      const timer = setTimeout(() => { clean(); reject(failure(name === "loadedmetadata" ? "METADATA_TIMEOUT" : "FRAME_TIMEOUT", `Video ${name === "loadedmetadata" ? "metadata loading" : "frame decoding"} timed out.`)); }, 10000);
       media.addEventListener(name, ok); media.addEventListener("error", fail, {once: true});
       signal.addEventListener("abort", abort, {once: true});
       if (signal.aborted) { abort(); return; }
@@ -85,11 +113,23 @@
   picker.addEventListener("change", async () => {
     const file = picker.files[0]; reset(); if (!file) return;
     const token = generation, signal = controller.signal;
+    diagnostics={loaderVersion:"orientation-diagnostics-v1", started:performance.now(), fileBytes:file.size, fileType:file.type,
+      urlState:"not-created", events:[], containerInfo:{note:"Inspection pending"}};
+    record("selected");
     loading = true; controls();
     try {
       if (file.size > 50*1024*1024 || file.size === 0) throw new Error("Choose a nonempty video up to 50 MiB.");
       if (!["video/mp4", "video/webm"].includes(file.type) || !video.canPlayType(file.type)) throw new Error("Choose a browser-supported MP4 or WebM video.");
+      // Advisory inspection uses local File slices, not fetch(blobURL).
+      window.VideoGuardMedia.inspect(file).then(info => {
+        if (token === generation) { diagnostics.containerInfo=info; record("container-inspected"); }
+      }).catch(() => {});
       url = URL.createObjectURL(file);
+      diagnostics.urlState="active";
+      for (const name of ["loadstart", "loadedmetadata", "loadeddata", "resize", "emptied", "abort", "stalled", "suspend", "error", "seeked"]) {
+        video.addEventListener(name, () => record(`media:${name}`), {signal});
+      }
+      record("url-created");
       status("Loading video metadata…");
       const media = video, source = url;
       await waitEvent("loadedmetadata", () => { media.src = source; media.load(); }, signal,
@@ -98,12 +138,27 @@
       // Pixel readiness is checked separately before the first canvas draw.
       if (token !== generation) return;
       if (!Number.isFinite(video.duration) || video.duration <= 0 || video.duration > 60) throw new Error("Video must have a finite duration within 60 seconds.");
-      if (video.videoWidth > 1920 || video.videoHeight > 1080 || Math.min(video.videoWidth, video.videoHeight) < 32) throw new Error("Video dimensions must be within 1920×1080 and at least 32×32.");
+      await waitForPixels(signal);
+      if (token !== generation) return;
+      const width=video.videoWidth, height=video.videoHeight;
+      diagnostics.decoded={width,height,duration:video.duration};
+      record("dimensions-checked");
+      if (!width || !height) throw failure("NO_VIDEO_DIMENSIONS", "Decoded media reports 0×0 video dimensions. The file may have no supported video track; inspect local diagnostics.");
+      if (Math.min(width,height) < 32 || Math.min(width,height) > 1080 || Math.max(width,height) > 1920) {
+        throw failure("DIMENSION_LIMIT", `Video reports ${width}×${height}. Limits: short side 32–1080, long side ≤1920, either orientation.`);
+      }
       const count = 5;
       frames = Array.from({length: count}, (_,i) => ({timestamp: (video.duration * .999) * i/(count-1), crop: [25,15,50,70], image: null}));
       frames.forEach((f,i) => { const option = document.createElement("option"); option.value = i; option.textContent = `Frame ${i+1} · ${f.timestamp.toFixed(2)}s`; selector.append(option); });
       index = 0; await selectFrame();
-    } catch (err) { if (token === generation) { reset(); error(err); } }
+    } catch (err) {
+      if (token === generation) {
+        // Keep the failed element/source for inspection. Revoke only on explicit
+        // clear/replacement/page exit; resetting here previously erased evidence.
+        loading=busy=false; frames=[]; selector.replaceChildren(); controls();
+        error(err); status("Video loading failed. Inspect local diagnostics, then clear or choose another file.");
+      }
+    }
   });
   selector.addEventListener("change", async () => {
     const token = generation;
@@ -163,5 +218,5 @@
     finally { if (token === generation) { busy = false; controls(); } }
   });
   $("video-reset").addEventListener("click", () => { reset(); picker.value = ""; });
-  window.addEventListener("pagehide", reset);
+  window.addEventListener("pagehide", () => reset("page-exit"));
 })();

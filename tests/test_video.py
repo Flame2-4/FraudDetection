@@ -58,12 +58,18 @@ class VideoTests(unittest.TestCase):
                 validate(bad)
 
     def test_image_bounds_and_malformed_jpeg(self):
-        for size in ((31, 100), (1921, 50), (50,1081)):
+        for size in ((31, 100), (1921, 50), (1081,1081)):
             with self.assertRaises(ValueError):
                 decode_image(validate(payload(size))['frames'][0][1])
         with self.assertRaises(Exception):
             decode_image(b'\xff\xd8\xffgarbage')
         decode_image(validate(payload((800,600)))['frames'][0][1]).close()
+
+    def test_portrait_crop_keeps_native_dimensions(self):
+        # A rotated HD video's padded face crop can retain portrait dimensions.
+        # The old landscape-only server gate rejected this valid browser output.
+        with decode_image(validate(payload((720,1280)))['frames'][0][1]) as image:
+            self.assertEqual(image.size, (720,1280))
 
     def test_repeated_jobs_and_expiry(self):
         jobs = VideoJobs(worker=fake_worker, timeout=3, ttl=1)

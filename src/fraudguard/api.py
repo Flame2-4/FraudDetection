@@ -17,6 +17,7 @@ from .models import CapacityError, ConflictError, ValidationError, strict_json
 MAX_BODY = 65536
 ASSETS = {"/": ("index.html", "text/html; charset=utf-8"),
           "/dashboard.js": ("dashboard.js", "text/javascript; charset=utf-8"),
+          "/media-info.js": ("media-info.js", "text/javascript; charset=utf-8"),
           "/videoguard.js": ("videoguard.js", "text/javascript; charset=utf-8"),
           "/dashboard.css": ("dashboard.css", "text/css; charset=utf-8")}
 

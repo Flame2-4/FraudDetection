@@ -4,7 +4,9 @@ No real model is installed on this test host. Test worker scores are never used
 by the application in serving mode. Generate a synthetic moving canvas video.
 """
 import base64
+import json
 import shutil
+import struct
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from threading import Thread
@@ -64,11 +66,42 @@ def main():
                 expect(page.locator('#crop-x')).to_be_enabled(timeout=15000)
                 assert page.locator('#video-preview').evaluate('(v) => [v.videoWidth,v.videoHeight]') == [1280,720]
                 expect(page.locator('#video-error')).to_be_hidden()
+                # A coded 1280×720 MP4 with a 90-degree track matrix decodes as
+                # 720×1280. This valid HD clip triggered the old dimension error.
+                rotated = bytearray(base64.b64decode(mp4))
+                tkhd = rotated.index(b'tkhd')
+                matrix = tkhd+4+(52 if rotated[tkhd+4] == 1 else 40)
+                for offset,value in ((0,0),(4,65536),(12,-65536),(16,0)):
+                    struct.pack_into('>i',rotated,matrix+offset,value)
+                page.locator('#video-file').set_input_files({'name':'rotated.mp4','mimeType':'video/mp4','buffer':bytes(rotated)})
+                expect(page.locator('#crop-x')).to_be_enabled(timeout=15000)
+                assert page.locator('#video-preview').evaluate('(v) => [v.videoWidth,v.videoHeight]') == [720,1280]
+                page.wait_for_function("() => JSON.parse(document.getElementById('video-diagnostics').textContent).containerInfo.tracks?.length > 0")
+                info = page.locator('#video-diagnostics').text_content()
+                track = next(t for t in json.loads(info)['containerInfo']['tracks'] if t.get('handler') == 'vide')
+                assert (track['codedWidth'],track['codedHeight']) == (1280,720)
+                assert track['rotationDegrees'] == 90 and track['codec'] == 'avc1'
+                assert json.loads(info)['urlState'] == 'active'
+                assert json.loads(info)['decoded']['height'] == 1280
+                assert json.loads(info)['loaderVersion'] == 'orientation-diagnostics-v1'
+                for i in range(5):
+                    page.select_option('#video-frame', str(i))
+                    expect(page.locator('#crop-x')).to_be_enabled()
+                    page.click('#video-confirm')
+                page.click('#video-analyze')
+                expect(page.locator('#video-result')).to_be_visible(timeout=15000)
                 page.click('#video-reset')
+                malformed = page.evaluate("async () => VideoGuardMedia.inspect(new File([new Uint8Array(12)], 'bad.mp4', {type:'video/mp4'}))")
+                assert malformed['container'] == 'MP4' and 'note' in malformed
                 # Regression: a stale loadeddata event must not validate zero dimensions.
                 # Delay native source loading while injecting an early event/state. This
                 # reproduces the old reused-element failure without external media/codecs.
                 page.add_init_script("""(() => {
+                  document.addEventListener('loadedmetadata', e => { if (window.suppressMetadata) e.stopImmediatePropagation(); }, true);
+                  const width = Object.getOwnPropertyDescriptor(HTMLVideoElement.prototype, 'videoWidth');
+                  Object.defineProperty(HTMLVideoElement.prototype, 'videoWidth', {
+                    configurable:true, get() { return window.forceOversize && this.readyState >= 1 ? 2048 : width.get.call(this); }
+                  });
                   const src = Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, 'src');
                   const duration = Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, 'duration');
                   Object.defineProperty(HTMLMediaElement.prototype, 'duration', {
@@ -131,18 +164,48 @@ def main():
                 assert page.evaluate('mediaAudit.created.length === mediaAudit.revoked.length')
                 assert not page.evaluate('mediaAudit.violations')
                 # A source that never emits metadata must fail within the 10s bound.
-                page.evaluate('window.stallMedia = true')
+                page.evaluate('window.forceOversize = true')
                 page.locator('#video-file').set_input_files(sample)
+                expect(page.locator('#video-error')).to_contain_text('Video reports 2048×240.', timeout=15000)
+                diagnostic = json.loads(page.locator('#video-diagnostics').text_content())
+                assert diagnostic['failureCode'] == 'DIMENSION_LIMIT'
+                assert diagnostic['urlState'] == 'active'
+                assert page.locator('#video-preview').evaluate('(v) => v.videoWidth') == 2048
+                assert diagnostic['events'][-1]['sourceAssigned']
+                page.click('#video-reset')
+                assert json.loads(page.locator('#video-diagnostics').text_content())['urlState'] == 'revoked'
+                page.evaluate('window.forceOversize = false; window.stallMedia = true')
+                page.locator('#video-file').set_input_files(sample)
+                expect(page.locator('#video-error')).to_be_visible(timeout=12000)
                 expect(page.locator('#video-error')).to_have_text('Video metadata loading timed out.', timeout=12000)
                 expect(page.locator('#crop-x')).to_be_disabled()
+                diagnostic = json.loads(page.locator('#video-diagnostics').text_content())
+                assert diagnostic['failureCode'] == 'SOURCE_LOST'
+                assert diagnostic['urlState'] == 'active'  # not revoked by error cleanup
+                page.click('#video-reset')
                 assert page.evaluate('mediaAudit.created.length === mediaAudit.revoked.length')
-                page.evaluate('window.stallMedia = false')
+                page.evaluate('window.stallMedia = false; window.suppressMetadata = true')
+                page.locator('#video-file').set_input_files(sample)
+                expect(page.locator('#video-error')).to_be_visible(timeout=12000)
+                expect(page.locator('#video-error')).to_have_text('Video metadata loading timed out.', timeout=12000)
+                diagnostic = json.loads(page.locator('#video-diagnostics').text_content())
+                assert diagnostic['failureCode'] == 'METADATA_TIMEOUT'
+                assert diagnostic['events'][-1]['sourceMatches']
+                assert diagnostic['urlState'] == 'active'
+                page.click('#video-reset')
+                page.evaluate('window.suppressMetadata = false')
 
                 page.locator('#video-file').set_input_files({'name':'bad.mp4','mimeType':'video/mp4','buffer':b'not a video'})
                 expect(page.locator('#video-error')).to_be_visible()
+                diagnostic = json.loads(page.locator('#video-diagnostics').text_content())
+                assert diagnostic['failureCode'].startswith('MEDIA_ERROR_')
+                assert diagnostic['urlState'] == 'active'
+                assert diagnostic['events'][-1]['sourceAssigned']
+                page.click('#video-reset')
+                assert json.loads(page.locator('#video-diagnostics').text_content())['urlState'] == 'revoked'
                 assert not errors, errors
                 browser.close()
-                print('Video browser checks passed: native decode, crops, repeated jobs, delayed metadata/stale events, replacement/cancellation, URL lifecycle, CSP, malformed video.')
+                print('Video browser checks passed: landscape/rotated MP4 inference, local codec/rotation inspection, preserved dimension failures, source loss, timeouts, decoding errors, cancellation, URL lifecycle, CSP.')
         finally:
             server.shutdown(); server.server_close(); thread.join()
 

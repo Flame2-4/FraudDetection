@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>FraudGuard AI · Live Transaction Analyzer</title>
-  <link rel="stylesheet" href="/dashboard.css"><script src="/dashboard.js" defer></script><script src="/videoguard.js" defer></script>
+  <link rel="stylesheet" href="/dashboard.css"><script src="/dashboard.js" defer></script><script src="/media-info.js" defer></script><script src="/videoguard.js" defer></script>
 </head>
 <body>
 <a class="skip-link" href="#analyzer">Skip to transaction analyzer</a>
@@ -70,7 +70,7 @@
     <div>
       <label for="video-file">Select a consented or synthetic video (MP4 / WebM)</label>
       <input id="video-file" type="file" accept="video/mp4,video/webm">
-      <p class="muted">Maximum 50 MiB, 60 seconds, 1920×1080. Browser codec support required. Only five cropped JPEG frames leave your browser.</p>
+      <p class="muted">Maximum 50 MiB, 60 seconds, HD in either orientation (long side ≤1920, short side ≤1080). Browser codec support required. Only five cropped JPEG frames leave your browser.</p>
       <video id="video-preview" muted playsinline preload="auto" aria-label="Selected video frame"></video>
       <p>Select a frame, adjust its face region, then confirm every frame. Coordinates are percentages of the source frame. Select the largest face box. Preview includes 25% padding on each side, clipped to frame boundaries. No automatic detection or tracking; manual boxes can differ from Kaggle Haar detections.</p>
       <label for="video-frame">Frame to inspect</label><select id="video-frame" disabled></select>
@@ -91,6 +91,7 @@
       <h3 id="video-result-title">VideoGuard assessment</h3>
       <p id="video-status" role="status" aria-live="polite">Select a video to begin.</p>
       <p id="video-error" role="alert" hidden></p>
+      <details><summary>Local video loading diagnostics</summary><p>No filename, raw media or blob URL is included or sent to the server. Copy this report when troubleshooting. MP4 headers are advisory; decoded browser dimensions determine acceptance.</p><pre id="video-diagnostics">No file selected.</pre></details>
       <div id="video-result" hidden><p>Mean sampled-frame Deepfake score (0–1)</p><div id="video-score" class="model-score"></div><progress id="video-meter" max="1" value="0" aria-label="Uncalibrated mean sampled-frame deepfake score"></progress><p id="video-count"></p><p id="video-model"></p><p id="video-warning"></p></div>
       <p class="muted">No classification threshold is applied. A low score does not establish authenticity. Missing faces, crop errors, compression and sampling may change results. Results expire after five minutes; no frames or results are added to financial history.</p>
     </article>

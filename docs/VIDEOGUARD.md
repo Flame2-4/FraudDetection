@@ -13,7 +13,7 @@ inference panel when its optional local inference dependencies are available.
 
 The browser accepts MP4/WebM only when its native decoder succeeds. MIME and
 extension are not proof of codec support. It checks nonempty size <=50 MiB,
-finite duration <=60 seconds and dimensions 32×32 through 1920×1080. No original
+finite duration <=60 seconds and dimensions with short side 32–1080 and long side <=1920 (either orientation). No original
 video is uploaded. Five timestamp samples span the clip; the last is at 99.9%
 to avoid seeking beyond available media. Native seeking is approximate: it is
 not identical to OpenCV's linspace over frame indices, especially with variable
@@ -26,10 +26,12 @@ using a stale `loadeddata` event from a reused/reset element as a metadata gate.
 
 File replacement/clear aborts pending listeners, detaches the old media source,
 then revokes its object URL. The active URL stays valid through preview and
-sampling. Error cleanup resets the media element, so zero dimensions/readyState
-observed after an error do not identify the original failure state. A failure
-before metadata now reports metadata timeout or decoding failure rather than
-premature dimension validation.
+sampling. Earlier error cleanup reset the media element, which erased the failure state
+and made subsequent inspection report 0×0. Failures now retain the source/element
+for inspection until explicit clear/replacement/page exit. No automatic URL
+revocation occurs on failure; clear a failed video to release its Blob memory.
+A failure before metadata reports metadata timeout or decoding failure rather
+than premature dimension validation.
 
 CSP remains `connect-src 'self'` and `media-src 'self' blob:`. Native video
 loading uses `media-src`; no JavaScript blob fetch is needed. A manually issued
@@ -57,7 +59,7 @@ classification. IDs are capabilities, not authentication; do not share them.
 
 Server limits: request body <=3 MiB before reading; no transfer encoding; max
 two concurrent upload readers; <=8 frames, <=256 KiB per JPEG, dimensions
-32×32 through 1920×1080 checked before full decode. The browser sends five frames;
+with short side 32–1080 and long side <=1920 (either orientation) checked before full decode. The browser sends five frames;
 the API permits 1–8 for diagnostic use. Oversized JPEG crops must be reselected
 or rejected, not silently downscaled. Metadata timestamps must be finite,
 strictly increasing, within a declared duration <=60s. Declared original video
@@ -148,3 +150,39 @@ Optional development browser checks (preinstalled Playwright + Chromium only):
 `PYTHONPATH=src:tests python3.12 tests/browser_smoke.py`.
 The video browser suite uses a clearly isolated test worker, not real model
 scores. Actual model parity and s390x resource acceptance remain manual gates.
+
+## Dimension and lifecycle diagnostics
+
+The landscape-only bounds in commit 4838e5c rejected 720×1280, although it has
+the same pixel count as 1280×720. A generated MP4 with a 1280×720 `avc1` coded
+track and a 90-degree track matrix reproduces this: Chrome reports 720×1280.
+Both browser input and server JPEG checks now accept short side <=1080, long
+side <=1920, minimum 32 pixels per side. The maximum pixel budget is unchanged.
+This confirms a reproducible bug, **not the actual metadata of deepfake_1.mp4**:
+that original file has not been available in the development checkout. Do not
+claim this is its cause without reading the new local report from that file.
+
+The expandable local report shows file byte count/type (no filename), bounded
+MP4 track metadata (codec sample-entry tag, coded/track dimensions and rotation),
+and at most 30 media/lifecycle snapshots. Snapshots include readiness, network
+state, dimensions, duration, expected-source matches, connected state, decoder
+error code, cancellation and application URL state. The original video and report
+are not uploaded; MP4 inspection uses File slices and no `fetch(blobURL)`.
+At most 256 top-level headers plus one <=2 MiB moov are read. Missing, oversized
+or malformed headers produce an advisory note and do not block native decoding.
+This header reader is not a complete codec parser, integrity check or decoder.
+WebM uses native decoded metadata rather than the MP4 header reader.
+
+Failure categories distinguish `METADATA_TIMEOUT`, `FRAME_TIMEOUT`,
+`MEDIA_ERROR_<code>` (1 aborted, 2 network, 3 decode, 4 unsupported source),
+`SOURCE_LOST`, `NO_VIDEO_DIMENSIONS` and `DIMENSION_LIMIT`. Cleanup logs explicit
+cancellation and application URL revocation, including the prior media state.
+Application URL tracking does not prove that unrelated browser tooling has not
+revoked the URL; native network/decode errors alone cannot distinguish an
+externally revoked URL from every unsupported-codec case. CSP remains unchanged.
+
+For the original failing file, open **Local video loading diagnostics** after
+selection and copy its report before clearing. Compare coded dimensions,
+rotation, decoded dimensions, failure category and the `dimensions-checked`
+event. A true decoded 1280×720 is within the limit; if it fails, the preserved
+report is required before attributing that failure to orientation or URL lifetime.

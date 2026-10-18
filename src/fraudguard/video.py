@@ -62,8 +62,8 @@ def decode_image(raw):
     with warnings.catch_warnings():
         warnings.simplefilter("error", Image.DecompressionBombWarning)
         with Image.open(io.BytesIO(raw), formats=["JPEG"]) as image:
-            if image.format != "JPEG" or not (32 <= image.width <= 1920 and 32 <= image.height <= 1080):
-                raise ValueError("JPEG dimensions must be within 32×32 and 1920×1080")
+            if image.format != "JPEG" or not (32 <= min(image.size) <= 1080 and max(image.size) <= 1920):
+                raise ValueError("JPEG dimensions require short side 32–1080 and long side at most 1920 (either orientation)")
             if getattr(image, "n_frames", 1) != 1:
                 raise ValueError("animated images are unsupported")
             image.load()
